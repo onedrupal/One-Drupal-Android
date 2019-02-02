@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/dimen_8dp">
+
+    <ImageView
+        android:id="@+id/iv_row_fan_post_user_image"
+        android:layout_width="@dimen/dimen_50dp"
+        android:layout_height="@dimen/dimen_50dp"
+        android:contentDescription="@string/content_description"
+        android:src="@mipmap/ic_launcher"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_row_fan_post_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/dimen_8dp"
+        android:layout_marginStart="@dimen/dimen_8dp"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/color_primary_text"
+        app:fontFamily="@font/sf_medium"
+        app:layout_constraintStart_toEndOf="@id/iv_row_fan_post_user_image"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Name" />
+
+    <TextView
+        android:id="@+id/tv_row_fan_post_category"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/dimen_8dp"
+        android:layout_marginStart="@dimen/dimen_8dp"
+        android:layout_marginTop="@dimen/dimen_8dp"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/color_secondary_text"
+        app:fontFamily="@font/sf_regular"
+        app:layout_constraintStart_toEndOf="@id/iv_row_fan_post_user_image"
+        app:layout_constraintTop_toBottomOf="@id/tv_row_fan_post_title"
+        tools:text="Redsox" />
+
+    <TextView
+        android:id="@+id/tv_row_fan_post_body"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dimen_8dp"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/color_primary_text"
+        app:fontFamily="@font/sf_regular"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/iv_row_fan_post_user_image"
+        tools:text="Blog post coming from APIs" />
+
+    <com.prominentdev.blog.widgets.SFImageViewSquare
+        android:id="@+id/iv_row_fan_post_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dimen_8dp"
+        android:contentDescription="@string/content_description"
+        android:src="@mipmap/ic_launcher"
+        android:scaleType="centerCrop"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_row_fan_post_body" />
+
+</android.support.constraint.ConstraintLayout>

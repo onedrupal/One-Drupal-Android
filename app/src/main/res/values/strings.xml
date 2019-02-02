@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">Blog</string>
+    <string name="file_uri" translatable="false">com.prominentdev.blog.provider</string>
+    <string name="client_id">247888764514-jmrglokg9o7qelq7cq62dalvjb9a130u.apps.googleusercontent.com</string>
+    <string name="content_description">Image</string>
+    <string name="back_pressed">Please click BACK again to exit from app</string>
+    <string name="signout">Signout</string>
+    <string name="check_internet_connection">Please check internet connectivity</string>
+    <string name="write_something_here">Write something here..</string>
+    <string name="redsox">Redsox</string>
+    <string name="eagles">Eagles</string>
+    <string name="patriots">Patriots</string>
+    <string name="post">POST</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="no_more_result">No more result</string>
+    <string name="unable_to_connect">Unable to connect to server</string>
+    <string name="ucrop_invalid_image">Image should be in either of img, jpg, jpeg, gif or png format</string>
+    <string name="ucrop_unexpected_error">Unexpected error</string>
+    <string name="ucrop_retrieve_error">Unable to retrieve the selected image</string>
+
+    <array name="select_image_from">
+        <item>Capture Image</item>
+        <item>From Gallery</item>
+    </array>
+</resources>

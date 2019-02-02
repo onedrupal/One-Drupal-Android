@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/app_bg"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/color_white"
+        android:minHeight="?android:attr/actionBarSize"
+        android:theme="@style/ToolBarStyle"
+        app:titleTextColor="@color/app_white" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/linearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dimen_8dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
+
+                        <EditText
+                            android:id="@+id/et_f_post"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/write_something_here"
+                            android:inputType="textCapSentences"
+                            android:text=""
+                            android:textAppearance="?android:attr/textAppearanceSmall"
+                            android:textColor="@color/color_secondary_text_dark"
+                            android:textColorHint="@color/color_secondary_text"
+                            app:fontFamily="@font/sf_regular"
+                            tools:text="@string/write_something_here" />
+                    </android.support.design.widget.TextInputLayout>
+
+                    <View
+                        android:layout_width="@dimen/dimen_8dp"
+                        android:layout_height="match_parent" />
+
+                    <ImageView
+                        android:id="@+id/iv_f_post_image"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="@string/content_description"
+                        android:src="@drawable/ic_photo" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dimen_8dp" />
+            </LinearLayout>
+
+            <com.prominentdev.blog.widgets.SFImageViewSquare
+                android:id="@+id/iv_f_post_preview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"
+                android:contentDescription="@string/content_description"
+                android:src="@drawable/ic_photo" />
+
+            <RadioGroup
+                android:id="@+id/radioGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="vertical">
+
+                <RadioButton
+                    android:id="@+id/rb_f_post_redsox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/redsox"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/color_secondary_text_dark"
+                    app:fontFamily="@font/sf_regular" />
+
+                <RadioButton
+                    android:id="@+id/rb_f_post_eagles"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/eagles"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/color_secondary_text_dark"
+                    app:fontFamily="@font/sf_regular" />
+
+                <RadioButton
+                    android:id="@+id/rb_f_post_patriots"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/patriots"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/color_secondary_text_dark"
+                    app:fontFamily="@font/sf_regular" />
+
+            </RadioGroup>
+        </LinearLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/ll_f_post_publish"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/color_white"
+        android:gravity="center"
+        android:padding="@dimen/dimen_15dp"
+        android:textAppearance="?android:attr/textAppearanceSmall">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/post"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/color_secondary_text_dark"
+            app:fontFamily="@font/sf_medium" />
+    </LinearLayout>
+</LinearLayout>
