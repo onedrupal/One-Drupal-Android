@@ -39,6 +39,23 @@ public class AdapterFanPosts extends RecyclerView.Adapter<RecyclerView.ViewHolde
         void onItemClickListener(View v, int position);
     }
 
+    public void addOneRequestData(ModelFanPosts model)
+    {
+        modelFanPosts.add(model);
+        notifyDataSetChanged();
+    }
+
+    public void clearAll()
+    {
+        modelFanPosts.clear();
+
+    }
+
+    public List<ModelFanPosts> getAllModelPost()
+    {
+        return modelFanPosts;
+    }
+
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, final int i) {

@@ -4,10 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +25,7 @@ import com.prominentdev.blog.adapter.AdapterFanPosts;
 import com.prominentdev.blog.helpers.PDRestClient;
 import com.prominentdev.blog.helpers.PDUtils;
 import com.prominentdev.blog.models.ModelFanPosts;
+import com.prominentdev.blog.util.EndlessRecyclerViewScrollListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,6 +44,7 @@ public class FragmentADRedsox extends FragmentBase {
 
     LinearLayoutManager manager;
     RecyclerView rv_f_redsox_recycler;
+    SwipeRefreshLayout swipeContainer;
     ArrayList<ModelFanPosts> modelFanPostsArrayList = new ArrayList<>();
     AdapterFanPosts adapter;
     LinearLayout no_connection_ll;
@@ -76,6 +80,7 @@ public class FragmentADRedsox extends FragmentBase {
         no_connection_ll = view.findViewById(R.id.no_connection_ll);
         no_connection_text = view.findViewById(R.id.no_connection_text);
         rv_f_redsox_recycler = view.findViewById(R.id.rv_f_redsox_recycler);
+        swipeContainer=view.findViewById(R.id.swipeContainer);
         rv_f_redsox_recycler.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL));
 
         rv_f_redsox_recycler.setHasFixedSize(true);
@@ -85,9 +90,35 @@ public class FragmentADRedsox extends FragmentBase {
         adapter = new AdapterFanPosts(context, modelFanPostsArrayList, new AdapterFanPosts.RecyclerViewClickListener() {
             @Override
             public void onItemClickListener(View v, int position) {
-                ModelFanPosts singleModelFanPosts = modelFanPostsArrayList.get(position);
+                ModelFanPosts singleModelFanPosts = adapter.getAllModelPost().get(position);
                 startActivity(new Intent(context, ActivityFanPostDetails.class)
                         .putExtra("nid", singleModelFanPosts.getNid()));
+            }
+        });
+        rv_f_redsox_recycler.setAdapter(adapter);
+
+
+
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeContainer.setRefreshing(false);
+                requestNewsList(0,true);
+            }
+        });
+
+        rv_f_redsox_recycler.addOnScrollListener(new EndlessRecyclerViewScrollListener(manager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to the bottom of the list
+                // customLoadMoreDataFromApi(page);
+
+                Log.e("page", ">>" + page);
+                Log.e("totalItemsCount", ">>" + totalItemsCount);
+
+                requestNewsList(page,false);
+
             }
         });
 
@@ -125,10 +156,10 @@ public class FragmentADRedsox extends FragmentBase {
             }
         });*/
 
-        requestNewsList();
+        requestNewsList(0,false);
     }
 
-    private void requestNewsList() {
+    private void requestNewsList(final int pageNumber,final boolean swipeRefresh) {
         String url = "";
         if (tab == 0) {
             url = "redsox";
@@ -138,17 +169,17 @@ public class FragmentADRedsox extends FragmentBase {
             url = "patriots";
         }
         RequestParams requestParams = new RequestParams();
-        PDRestClient.get(context, BuildConfig.API_ENPOINT + "myapi/v1/articles/" + url, requestParams, new JsonHttpResponseHandler() {
+        PDRestClient.get(context, BuildConfig.API_ENPOINT + "myapi/v1/articles/" + url+"?page="+pageNumber, requestParams, new JsonHttpResponseHandler() {
             @Override
             public void onStart() {
                 super.onStart();
-                if (scroll == 1) {
-                    nextPageToken = "";
-                    modelFanPostsArrayList.clear();
-                    adapter.notifyDataSetChanged();
-                } else {
-                    modelFanPostsArrayList.add(null);
-                }
+//                if (scroll == 1) {
+//                    nextPageToken = "";
+//                    modelFanPostsArrayList.clear();
+//                    adapter.notifyDataSetChanged();
+//                } else {
+//                    modelFanPostsArrayList.add(null);
+//                }
                 response_error = "";
                 no_connection_ll.setVisibility(View.GONE);
                 _progressDialogAsync.show();
@@ -159,21 +190,31 @@ public class FragmentADRedsox extends FragmentBase {
                 super.onSuccess(statusCode, headers, result);
                 _progressDialogAsync.cancel();
                 try {
-                    if (scroll != 1) {
-                        modelFanPostsArrayList.remove(modelFanPostsArrayList.size() - 1);
-                        adapter.notifyItemRemoved(modelFanPostsArrayList.size());
-                    }
+//                    if (scroll != 1) {
+//                        modelFanPostsArrayList.remove(modelFanPostsArrayList.size() - 1);
+//                        adapter.notifyItemRemoved(modelFanPostsArrayList.size());
+//                    }
                     //nextPageToken = result.has("next") ? result.getString("next") : "";
                     if (!result.has("results")) {
                         response_error = result.getString("");
                     } else {
-                        JSONArray ja = result.getJSONArray("results");
+                      //  modelFanPostsArrayList.clear();
 
+                        if(swipeRefresh)
+                        {
+                            adapter.clearAll();
+                        }
+                        JSONArray ja = result.getJSONArray("results");
                         for (int j = 0; j < ja.length(); j++) {
                             JSONObject jo = (JSONObject) ja.get(j);
                             ModelFanPosts modelFanPosts = new ModelFanPosts(jo);
-                            modelFanPostsArrayList.add(modelFanPosts);
+                           // modelFanPostsArrayList.add(modelFanPosts);
+                            adapter.addOneRequestData(modelFanPosts);
                         }
+                        adapter.notifyDataSetChanged();
+
+
+
                     }
                 } catch (JSONException e) {
                     response_error = getString(R.string.unable_to_connect);
@@ -181,18 +222,18 @@ public class FragmentADRedsox extends FragmentBase {
                 }
 
                 if (response_error == null || response_error.isEmpty()) {
-                    if (scroll == 1) {
-                        rv_f_redsox_recycler.setLayoutManager(manager);
-                        rv_f_redsox_recycler.setAdapter(adapter);
-                    } else {
-                        adapter.notifyItemInserted(modelFanPostsArrayList.size() - 1);
-                        View first = rv_f_redsox_recycler.getChildAt(0);
-                        int position = 0;
-                        if (first != null)
-                            position = first.getTop() - first.getPaddingTop();
-                    }
+//                    if (scroll == 1) {
+//                        rv_f_redsox_recycler.setLayoutManager(manager);
+//                        rv_f_redsox_recycler.setAdapter(adapter);
+//                    } else {
+//                        adapter.notifyItemInserted(modelFanPostsArrayList.size() - 1);
+//                        View first = rv_f_redsox_recycler.getChildAt(0);
+//                        int position = 0;
+//                        if (first != null)
+//                            position = first.getTop() - first.getPaddingTop();
+//                    }
                 } else {
-                    if (modelFanPostsArrayList.size() <= 0) {
+                    if (adapter.getAllModelPost().size() <= 0) {
                         no_connection_ll.setVisibility(View.VISIBLE);
                         no_connection_text.setText(response_error);
                     } else {
