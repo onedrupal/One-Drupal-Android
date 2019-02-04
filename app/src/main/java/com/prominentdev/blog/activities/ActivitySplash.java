@@ -17,7 +17,8 @@ public class ActivitySplash extends ActivityBase {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (sessionManager.isLoggedIn()) {
+                //if (sessionManager.isLoggedIn()) {
+                if (true) {
                     startActivity(new Intent(context, ActivityDashboard.class));
                     finish();
                 } else {
