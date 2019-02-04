@@ -37,6 +37,16 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
         visibleThreshold = visibleThreshold * layoutManager.getSpanCount();
     }
 
+    public void resetValues(LinearLayoutManager layoutManager)
+    {
+        this.mLayoutManager = layoutManager;
+        visibleThreshold = 5;
+        currentPage = 0;
+        previousTotalItemCount = 0;
+        loading = true;
+        startingPageIndex = 0;
+    }
+
     public int getLastVisibleItem(int[] lastVisibleItemPositions) {
         int maxSize = 0;
         for (int i = 0; i < lastVisibleItemPositions.length; i++) {
