@@ -99,20 +99,11 @@ public class FragmentADRedsox extends FragmentBase {
 
 
 
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                swipeContainer.setRefreshing(false);
-                requestNewsList(0,true);
-            }
-        });
 
-        rv_f_redsox_recycler.addOnScrollListener(new EndlessRecyclerViewScrollListener(manager) {
+
+        final EndlessRecyclerViewScrollListener scrollListener=new EndlessRecyclerViewScrollListener(manager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
-                // Triggered only when new data needs to be appended to the list
-                // Add whatever code is needed to append new items to the bottom of the list
-                // customLoadMoreDataFromApi(page);
 
                 Log.e("page", ">>" + page);
                 Log.e("totalItemsCount", ">>" + totalItemsCount);
@@ -120,7 +111,20 @@ public class FragmentADRedsox extends FragmentBase {
                 requestNewsList(page,false);
 
             }
+        };
+
+        rv_f_redsox_recycler.addOnScrollListener(scrollListener);
+
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeContainer.setRefreshing(false);
+                scrollListener.resetValues(manager);
+                requestNewsList(0,true);
+            }
         });
+
+
 
         /*rv_f_redsox_recycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -158,6 +162,8 @@ public class FragmentADRedsox extends FragmentBase {
 
         requestNewsList(0,false);
     }
+
+
 
     private void requestNewsList(final int pageNumber,final boolean swipeRefresh) {
         String url = "";
