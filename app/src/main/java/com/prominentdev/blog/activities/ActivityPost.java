@@ -269,9 +269,10 @@ public class ActivityPost extends ActivityBase implements View.OnClickListener {
         RequestBody fbody = RequestBody.create(MediaType.parse("image"), partFile);
 
 
+
         Request request = new Request.Builder()
                 .header("Content-Type", "application/octet-stream")
-                .header("Content-Disposition", "file; filename=\"newimg4.jpg\"")
+                .header("Content-Disposition", "file; filename=\""+partFile.getName()+"\"")
                 .header("Google-Access-Token", sessionManager.getParticularField(SessionManager.ACCESS_TOKEN))
                 .header("X-CSRF-Token", xCSRFToken)
                 .url(url)
