@@ -9,15 +9,23 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.prominentdev.blog.R;
 import com.prominentdev.blog.fragments.FragmentADHome;
 import com.prominentdev.blog.helpers.PDUtils;
+import com.prominentdev.blog.provider.PersistData;
+
+import static com.prominentdev.blog.models.ConstantData.EMAIL;
+import static com.prominentdev.blog.models.ConstantData.FULL_NAME;
+import static com.prominentdev.blog.models.ConstantData.PROFILE_PICTURE;
 
 /**
  * Created by Narender Kumar on 11/12/2018.
@@ -51,12 +59,37 @@ public class ActivityDashboard extends ActivityBase {
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
 
-        profilePicture=(ImageView)mDrawerLayout.findViewById(R.id.profile_image);
-        fullName=(TextView) mDrawerLayout.findViewById(R.id.full_name);
-        email=(TextView) mDrawerLayout.findViewById(R.id.email_address);
+
 
 
         NavigationView navigationView = findViewById(R.id.nav_view);
+        View headerView = navigationView.getHeaderView(0);
+
+        profilePicture=(ImageView)headerView.findViewById(R.id.profile_header);
+        fullName=(TextView) headerView.findViewById(R.id.full_name);
+        email=(TextView) headerView.findViewById(R.id.email_address);
+
+        if(!TextUtils.isEmpty(PersistData.getStringData(context,FULL_NAME)))
+        {
+            fullName.setText(PersistData.getStringData(context,FULL_NAME));
+        }
+
+        if(!TextUtils.isEmpty(PersistData.getStringData(context,EMAIL)))
+        {
+            email.setText(PersistData.getStringData(context,EMAIL));
+        }
+
+
+
+        if(!TextUtils.isEmpty(PersistData.getStringData(context,PROFILE_PICTURE)))
+        {
+            Glide
+                    .with(context)
+                    .load(PersistData.getStringData(context,PROFILE_PICTURE))
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(profilePicture);
+        }
+
 
 
         Menu nav_Menu = navigationView.getMenu();
