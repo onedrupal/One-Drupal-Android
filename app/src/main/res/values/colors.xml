@@ -26,4 +26,8 @@
     <color name="app_text_black_light">#3c3c3c</color>
     <color name="app_text_grey">#ABABAB</color>
     <color name="app_grey_transparency_80">#80ABABAB</color>
+
+    <color name="blue_200">#FF90CAF9</color>
+    <color name="blue_500">#FF2196F3</color>
+    <color name="blue_700">#FF1976D2</color>
 </resources>
