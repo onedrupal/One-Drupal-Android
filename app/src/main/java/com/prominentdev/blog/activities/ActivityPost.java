@@ -359,7 +359,7 @@ public class ActivityPost extends ActivityBase implements View.OnClickListener {
 
             //body input
             JSONObject bodyObject = new JSONObject();
-            titleObject.put("value", knife.toHtml());
+            bodyObject.put("value", knife.toHtml());
             JSONArray bodyArray = new JSONArray();
             bodyArray.put(bodyObject);
             jsonParams.put("body", bodyArray);
