@@ -1,42 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- Use DrawerLayout as root container for activity -->
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.ActivityDashboard">
+    android:fitsSystemWindows="true">
 
-    <LinearLayout
+    <!-- Layout to contain contents of main body of screen (drawer will slide over this) -->
+    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        tools:context=".activities.ActivityDashboard">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+        <LinearLayout
             android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/color_white"
+                android:minHeight="?android:attr/actionBarSize"
+                android:theme="@style/ToolBarStyle"
+                app:titleTextColor="@color/color_secondary_text_dark" />
+
+            <FrameLayout
+                android:id="@+id/ad_fl_root"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/toolbar" />
+        </LinearLayout>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/ad_fab"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/color_white"
-            android:minHeight="?android:attr/actionBarSize"
-            android:theme="@style/ToolBarStyle"
-            app:titleTextColor="@color/color_secondary_text_dark" />
+            android:layout_margin="@dimen/dimen_15dp"
+            android:src="@drawable/ic_post"
+            app:backgroundTint="@color/color_secondary_text_dark"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+    </android.support.constraint.ConstraintLayout>
 
-        <FrameLayout
-            android:id="@+id/ad_fl_root"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/toolbar" />
-    </LinearLayout>
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/ad_fab"
+    <!-- Container for contents of drawer - use NavigationView to make configuration easier -->
+    <android.support.design.widget.NavigationView
+        android:id="@+id/nav_view"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/dimen_15dp"
-        android:src="@drawable/ic_post"
-        app:backgroundTint="@color/color_secondary_text_dark"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-</android.support.constraint.ConstraintLayout>
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:menu="@menu/drawer_view"
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/navigation_header"
+        />
+
+</android.support.v4.widget.DrawerLayout>
+
