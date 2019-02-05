@@ -5,6 +5,7 @@
     android:orientation="vertical">
 
     <ImageView
+        android:id="@+id/profile_header"
         android:layout_marginLeft="@dimen/dimen_20dp"
         android:layout_marginTop="@dimen/dimen_50dp"
         android:src="@drawable/profile_pic"
@@ -18,13 +19,13 @@
         android:textSize="18sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Full Name" />
+         />
     <TextView
         android:id="@+id/email_address"
         android:layout_marginLeft="@dimen/dimen_20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="test@gmail.com" />
+        />
 
     <TextView
         android:layout_marginTop="@dimen/dimen_10dp"

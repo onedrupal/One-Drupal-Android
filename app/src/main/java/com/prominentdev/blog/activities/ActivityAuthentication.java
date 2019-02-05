@@ -1,8 +1,10 @@
 package com.prominentdev.blog.activities;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -38,11 +40,18 @@ import com.prominentdev.blog.BuildConfig;
 import com.prominentdev.blog.R;
 import com.prominentdev.blog.helpers.PDRestClient;
 import com.prominentdev.blog.helpers.PDUtils;
+import com.prominentdev.blog.provider.PersistData;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
@@ -51,6 +60,10 @@ import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.entity.StringEntity;
 import cz.msebera.android.httpclient.message.BasicHeader;
 import cz.msebera.android.httpclient.protocol.HTTP;
+
+import static com.prominentdev.blog.models.ConstantData.EMAIL;
+import static com.prominentdev.blog.models.ConstantData.FULL_NAME;
+import static com.prominentdev.blog.models.ConstantData.PROFILE_PICTURE;
 
 public class ActivityAuthentication extends ActivityBase implements View.OnClickListener {
 
@@ -173,6 +186,12 @@ public class ActivityAuthentication extends ActivityBase implements View.OnClick
             googleAccessToken = account.getIdToken();
             fullName = account.getDisplayName();
             emailAddress = account.getEmail();
+
+            String url=account.getPhotoUrl().toString();
+            Log.e(TAG, "updateUI: "+url );
+
+            storeUserInformation(fullName,emailAddress,account.getPhotoUrl());
+
             Glide
                     .with(context)
                     .load(account.getPhotoUrl())
@@ -186,6 +205,14 @@ public class ActivityAuthentication extends ActivityBase implements View.OnClick
             signInButton.setVisibility(View.VISIBLE);
         }
     }
+
+    private void storeUserInformation(final String fullName,final String emailAddress,final Uri uri)
+    {
+        PersistData.setStringData(context,FULL_NAME,fullName);
+        PersistData.setStringData(context,EMAIL,emailAddress);
+        PersistData.setStringData(context,PROFILE_PICTURE,uri.toString());
+    }
+
 
     private void registerUser() {
         JSONObject object, nameObj, emailObj;
