@@ -23,6 +23,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -350,12 +351,14 @@ public class ActivityPost extends ActivityBase implements View.OnClickListener {
             jsonParams.put("title", titleArray);
 
             //image input
-            JSONObject imageObject = new JSONObject();
-            imageObject.put("target_id", imageUploadResponse.getFid().get(0).getValue());
-            imageObject.put("description", "The most fascinating image ever!");
-            JSONArray imageArray = new JSONArray();
-            imageArray.put(imageObject);
-            jsonParams.put("field_image", imageArray);
+            if(imageUploadResponse != null) {
+                JSONObject imageObject = new JSONObject();
+                imageObject.put("target_id", imageUploadResponse.getFid().get(0).getValue());
+                imageObject.put("description", "The most fascinating image ever!");
+                JSONArray imageArray = new JSONArray();
+                imageArray.put(imageObject);
+                jsonParams.put("field_image", imageArray);
+            }
 
             //body input
             JSONObject bodyObject = new JSONObject();
@@ -371,8 +374,19 @@ public class ActivityPost extends ActivityBase implements View.OnClickListener {
             typeArray.put(typeObject);
             jsonParams.put("type", typeArray);
 
+            RadioGroup radioButtonGroup = (RadioGroup)findViewById(R.id.radioGroup);
+            /*int radioButtonID = radioButtonGroup.getCheckedRadioButtonId();
+            View radioButton = radioButtonGroup.findViewById(radioButtonID);
+            int idx = radioButtonGroup.indexOfChild(radioButton);*/
+            int checkedRadioButtonId = radioButtonGroup.getCheckedRadioButtonId();
+            String postCategory = "redsox";
+            if (checkedRadioButtonId == R.id.rb_f_post_eagles) {
+                postCategory = "eagles";
+            }else if (checkedRadioButtonId == R.id.rb_f_post_patriots) {
+                postCategory = "patriots";
+            }
             JSONObject categoryObject = new JSONObject();
-            categoryObject.put("value", "redsox");
+            categoryObject.put("value", postCategory);
             JSONArray categoryArray = new JSONArray();
             categoryArray.put(categoryObject);
             jsonParams.put("field_text_category", categoryArray);
