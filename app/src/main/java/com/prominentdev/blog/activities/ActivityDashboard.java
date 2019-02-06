@@ -3,6 +3,7 @@ package com.prominentdev.blog.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -18,6 +19,12 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.prominentdev.blog.R;
 import com.prominentdev.blog.fragments.FragmentADHome;
 import com.prominentdev.blog.helpers.PDUtils;
@@ -41,6 +48,7 @@ public class ActivityDashboard extends ActivityBase {
 
     private ImageView profilePicture;
     private TextView fullName,email;
+    GoogleSignInClient mGoogleSignInClient;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -121,13 +129,13 @@ public class ActivityDashboard extends ActivityBase {
 
                             case R.id.logoutButton:
 
-                                if(sessionManager!=null)
+                                if(mGoogleSignInClient!=null)
                                 {
-                                    sessionManager.logoutUser();
+                                    signOut();
+
                                 }
 
-                                startActivity(new Intent(context, ActivityAuthentication.class));
-                                finish();
+
 
                                 break;
                         }
@@ -149,6 +157,8 @@ public class ActivityDashboard extends ActivityBase {
                     .add(R.id.ad_fl_root, FragmentADHome.newInstance(), FragmentADHome.class.getSimpleName())
                     .commit();
         }
+
+        googleSignInInit();
     }
 
     @Override
@@ -191,5 +201,34 @@ public class ActivityDashboard extends ActivityBase {
         } else {
             ad_fab.show();
         }
+
+
+    }
+
+    private void signOut() {
+        mGoogleSignInClient.signOut()
+                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        sessionManager.logoutUser();
+                        startActivity(new Intent(context, ActivityAuthentication.class));
+                        finish();
+                    }
+                });
+    }
+
+    private void googleSignInInit() {
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.client_id))
+                .requestEmail()
+                .build();
+
+        // Build a GoogleSignInClient with the options specified by gso.
+        mGoogleSignInClient = GoogleSignIn.getClient(context, gso);
+
+//        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(context);
+//        if (account != null) {
+//            updateUI(account, true);
+//        }
     }
 }
