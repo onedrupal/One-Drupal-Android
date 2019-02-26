@@ -1,45 +1,34 @@
-package com.prominentdev.blog.fragments;
+package com.prominentdev.blog.activities;
 
-import android.content.Context;
-import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
-import com.loopj.android.http.JsonHttpResponseHandler;
+import com.bogdwellers.pinchtozoom.ImageMatrixTouchHandler;
+import com.bumptech.glide.Glide;
 import com.loopj.android.http.RequestParams;
 import com.prominentdev.blog.BuildConfig;
 import com.prominentdev.blog.R;
-import com.prominentdev.blog.activities.ActivityFanPostDetails;
-import com.prominentdev.blog.adapter.AdapterFanPosts;
-import com.prominentdev.blog.helpers.PDRestClient;
 import com.prominentdev.blog.helpers.PDUtils;
 import com.prominentdev.blog.models.ModelFanPosts;
-import com.prominentdev.blog.util.EndlessRecyclerViewScrollListener;
+import com.prominentdev.blog.widgets.ProgressDialogAsync;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import cz.msebera.android.httpclient.Header;
 import okhttp3.Cache;
 import okhttp3.CacheControl;
 import okhttp3.Call;
@@ -50,150 +39,153 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 
-/**
- * Created by Narender Kumar on 9/30/2018.
- * For Prominent Developers, Faridabad (India)
- */
+public class ViewImageActivity extends AppCompatActivity {
+    ViewPager viewPager;
+    ArrayList<ModelFanPosts> posts = new ArrayList<>();
+    int position = 0;
+    ImagePagerAdapter adapter;
 
-public class FragmentADRedsox extends FragmentBase {
-
-    LinearLayoutManager manager;
-    RecyclerView rv_f_redsox_recycler;
-    SwipeRefreshLayout swipeContainer;
-    ArrayList<ModelFanPosts> modelFanPostsArrayList = new ArrayList<>();
-    AdapterFanPosts adapter;
-    LinearLayout no_connection_ll;
-    TextView no_connection_text;
-    Interceptor cacheInterceptor = new Interceptor() {
-        @Override
-        public okhttp3.Response intercept(Chain chain) throws IOException {
-
-            CacheControl.Builder cacheBuilder = new CacheControl.Builder();
-            cacheBuilder.maxAge(0, TimeUnit.SECONDS);
-            cacheBuilder.maxStale(365, TimeUnit.DAYS);
-            CacheControl cacheControl = cacheBuilder.build();
-
-            Request request = chain.request();
-            if (hasNetwork(getActivity())) {
-                request = request.newBuilder()
-                        .cacheControl(cacheControl)
-                        .build();
-            }
-            okhttp3.Response originalResponse = chain.proceed(request);
-            if (hasNetwork(getActivity())) {
-                int maxAge = 60; // read from cache
-                return originalResponse.newBuilder()
-                        .header("Cache-Control", "public, max-age=" + maxAge)
-                        .build();
-            } else {
-                int maxStale = 60 * 60 * 24 * 28; // tolerate 4-weeks stale
-                return originalResponse.newBuilder()
-                        .header("Cache-Control", "public, only-if-cached, max-stale=" + maxStale)
-                        .build();
-            }
-        }
-    };
-    String nextPageToken;
-    String response_error = "";
-    int scroll = 1, tab = 0, firstVisibleItem, visibleItemCount, totalItemCount;
-    private int visibleThreshold = 2;
+    ImageView ivBack, ivLeft, ivRight;
+    ProgressDialogAsync _progressDialogAsync;
+    private String response_error = "";
     private boolean loading = false;
-
-    public static FragmentADRedsox newInstance(int i) {
-        Bundle args = new Bundle();
-        args.putInt("tab", i);
-        FragmentADRedsox fragment = new FragmentADRedsox();
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_ad_redsox, container, false);
-
-    }
+    int page = 0;
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        if (getArguments() != null) {
-            tab = getArguments().getInt("tab");
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_view_image);
+        _progressDialogAsync = new ProgressDialogAsync(this);
+
+        viewPager = findViewById(R.id.viewPager);
+        position = getIntent().getIntExtra("position", 0);
+        page = getIntent().getIntExtra("page", 0);
+        posts = (ArrayList<ModelFanPosts>) getIntent().getSerializableExtra("posts");
+        adapter = new ImagePagerAdapter();
+        viewPager.setAdapter(adapter);
+        ivBack = findViewById(R.id.ivBack);
+        ivRight = findViewById(R.id.ivRight);
+        ivLeft = findViewById(R.id.ivLeft);
+        ivBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+        if (posts.size() > 1) {
+            ivRight.setVisibility(View.VISIBLE);
+        } else {
+            ivRight.setVisibility(View.GONE);
         }
-        no_connection_ll = view.findViewById(R.id.no_connection_ll);
-        no_connection_text = view.findViewById(R.id.no_connection_text);
-        rv_f_redsox_recycler = view.findViewById(R.id.rv_f_redsox_recycler);
-        swipeContainer = view.findViewById(R.id.swipeContainer);
-        rv_f_redsox_recycler.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL));
-
-        rv_f_redsox_recycler.setHasFixedSize(true);
-        manager = new LinearLayoutManager(context);
-        rv_f_redsox_recycler.setLayoutManager(manager);
-        rv_f_redsox_recycler.setItemAnimator(new DefaultItemAnimator());
-        adapter = new AdapterFanPosts(context, modelFanPostsArrayList, new AdapterFanPosts.RecyclerViewClickListener() {
+        ivLeft.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemClickListener(View v, int position) {
-                ModelFanPosts singleModelFanPosts = adapter.getAllModelPost().get(position);
-                startActivity(new Intent(context, ActivityFanPostDetails.class)
-                        .putExtra("nid", singleModelFanPosts.getNid()));
+            public void onClick(View view) {
+                viewPager.arrowScroll(View.FOCUS_LEFT);
             }
         });
-        rv_f_redsox_recycler.setAdapter(adapter);
-
-
-        final EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(manager) {
+        ivRight.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onLoadMore(int page, int totalItemsCount) {
-
-                Log.e("page", ">>" + page);
-                Log.e("totalItemsCount", ">>" + totalItemsCount);
-
-                requestNewsList(page, false);
-
-            }
-        };
-
-        rv_f_redsox_recycler.addOnScrollListener(scrollListener);
-
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                swipeContainer.setRefreshing(false);
-                scrollListener.resetValues(manager);
-                requestNewsList(0, true);
+            public void onClick(View view) {
+                viewPager.arrowScroll(View.FOCUS_RIGHT);
             }
         });
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int i, float v, int i1) {
 
+            }
 
-        requestNewsList(0, false);
+            @Override
+            public void onPageSelected(int i) {
+                if (i == posts.size() - 1) {
+                    ivLeft.setVisibility(View.VISIBLE);
+                    ivRight.setVisibility(View.GONE);
+                } else if (i == 0) {
+                    ivLeft.setVisibility(View.GONE);
+                    if (posts.size() > 1) {
+                        ivRight.setVisibility(View.VISIBLE);
+                    } else
+                        ivRight.setVisibility(View.GONE);
+                } else {
+                    ivLeft.setVisibility(View.VISIBLE);
+                    ivRight.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int i) {
+
+            }
+        });
+        viewPager.setCurrentItem(position);
     }
 
-    private boolean hasNetwork(Context context) {
-        boolean isConnected = false; // Initial Value
-        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
-        if (activeNetwork != null && activeNetwork.isConnected())
-            isConnected = true;
-        return isConnected;
+    private class ImagePagerAdapter extends PagerAdapter {
+
+        @Override
+        public Object instantiateItem(ViewGroup collection, int position) {
+            LayoutInflater inflater = LayoutInflater.from(ViewImageActivity.this);
+            View layout = (View) inflater.inflate(R.layout.row_pager_image, collection, false);
+            collection.addView(layout);
+
+            ImageView ivImage = layout.findViewById(R.id.ivImage);
+            Glide.with(ViewImageActivity.this)
+                    .load(posts.get(position).getField_image())
+                    .into(ivImage);
+            ivImage.setOnTouchListener(new ImageMatrixTouchHandler(layout.getContext()));
+            if (position == posts.size() - 1) {
+                page = page + 1;
+                requestNewsList(page);
+            }
+
+            return layout;
+        }
+
+        public void addOneRequestData(ModelFanPosts model) {
+            posts.add(model);
+            ivRight.setVisibility(View.VISIBLE);
+            notifyDataSetChanged();
+        }
+
+        public List<ModelFanPosts> getAllModelPost() {
+            return posts;
+        }
+
+        @Override
+        public void destroyItem(ViewGroup collection, int position, Object view) {
+            collection.removeView((LinearLayout) view);
+        }
+
+        @Override
+        public int getCount() {
+            return posts.size();
+        }
+
+        @Override
+        public boolean isViewFromObject(View view, Object object) {
+            return view == object;
+        }
+
+
     }
 
-    private void requestNewsList(final int pageNumber, final boolean swipeRefresh) {
-        String url = "";
-        if (tab == 0) {
+    private void requestNewsList(final int pageNumber) {
+        String url = "redsox";
+      /*  if (tab == 0) {
             url = "redsox";
         } else if (tab == 1) {
             url = "eagles";
         } else if (tab == 2) {
             url = "patriots";
-        }
+        }*/
 
 
         response_error = "";
-        no_connection_ll.setVisibility(View.GONE);
+        //no_connection_ll.setVisibility(View.GONE);
         _progressDialogAsync.show();
         String newUrl = BuildConfig.API_ENPOINT + "myapi/v1/articles/" + url + "?page=" + pageNumber;
 
-        File httpCacheDirectory = new File(getActivity().getCacheDir(), "offlineCache");
+        File httpCacheDirectory = new File(this.getCacheDir(), "offlineCache");
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
@@ -209,14 +201,14 @@ public class FragmentADRedsox extends FragmentBase {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, final IOException e) {
-                getActivity().runOnUiThread(new Runnable() {
+                runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
 
 
-                        no_connection_ll.setVisibility(View.VISIBLE);
-                        no_connection_text.setText(e.toString());
-                        PDUtils.showToast(context, e.toString());
+                        //    no_connection_ll.setVisibility(View.VISIBLE);
+                        //  no_connection_text.setText(e.toString());
+                        PDUtils.showToast(ViewImageActivity.this, e.toString());
                         _progressDialogAsync.cancel();
                     }
                 });
@@ -225,7 +217,7 @@ public class FragmentADRedsox extends FragmentBase {
             @Override
             public void onResponse(Call call, final Response response) throws IOException {
                 String respoStr = response.body().string();
-                getActivity().runOnUiThread(new Runnable() {
+                runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
 
@@ -243,9 +235,7 @@ public class FragmentADRedsox extends FragmentBase {
                             } else {
                                 //  modelFanPostsArrayList.clear();
 
-                                if (swipeRefresh) {
-                                    adapter.clearAll();
-                                }
+
                                 JSONArray ja = result.getJSONArray("results");
                                 for (int j = 0; j < ja.length(); j++) {
                                     JSONObject jo = (JSONObject) ja.get(j);
@@ -275,10 +265,10 @@ public class FragmentADRedsox extends FragmentBase {
 //                    }
                         } else {
                             if (adapter.getAllModelPost().size() <= 0) {
-                                no_connection_ll.setVisibility(View.VISIBLE);
-                                no_connection_text.setText(response_error);
+                                //no_connection_ll.setVisibility(View.VISIBLE);
+                                //no_connection_text.setText(response_error);
                             } else {
-                                PDUtils.showToast(context, response_error);
+                                PDUtils.showToast(ViewImageActivity.this, response_error);
                             }
                         }
                         loading = false;
@@ -386,6 +376,7 @@ public class FragmentADRedsox extends FragmentBase {
    */
     }
 
+
     private Interceptor provideCacheInterceptor() {
 
         return new Interceptor() {
@@ -402,7 +393,6 @@ public class FragmentADRedsox extends FragmentBase {
                     CacheControl cc = new CacheControl.Builder()
                             .maxStale(1, TimeUnit.DAYS)
                             .build();
-
 
 
                     request = request.newBuilder()
@@ -443,4 +433,5 @@ public class FragmentADRedsox extends FragmentBase {
             }
         };
     }
+
 }

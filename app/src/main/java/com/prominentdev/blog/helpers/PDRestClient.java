@@ -26,9 +26,9 @@ public class PDRestClient {
         PDUtils.log(url + "?" + params.toString());
 
         client.setEnableRedirects(false);
-        client.setMaxRetriesAndTimeout(4, 10000);
-        client.setConnectTimeout(20 * 1000);
-        client.setTimeout(300 * 1000);
+        client.setMaxRetriesAndTimeout(5, 10000);
+        client.setConnectTimeout(200 * 1000);
+        client.setTimeout(600 * 1000);
         client.post(context, url, params, responseHandler);
     }
 

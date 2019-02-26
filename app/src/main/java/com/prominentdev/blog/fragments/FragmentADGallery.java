@@ -12,6 +12,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,19 +20,18 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.prominentdev.blog.BuildConfig;
 import com.prominentdev.blog.R;
 import com.prominentdev.blog.activities.ActivityFanPostDetails;
+import com.prominentdev.blog.activities.ViewImageActivity;
 import com.prominentdev.blog.adapter.AdapterFanPosts;
-import com.prominentdev.blog.helpers.PDRestClient;
+import com.prominentdev.blog.adapter.GalleryAdapter;
 import com.prominentdev.blog.helpers.PDUtils;
 import com.prominentdev.blog.models.ModelFanPosts;
 import com.prominentdev.blog.util.EndlessRecyclerViewScrollListener;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -39,7 +39,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-import cz.msebera.android.httpclient.Header;
 import okhttp3.Cache;
 import okhttp3.CacheControl;
 import okhttp3.Call;
@@ -55,18 +54,18 @@ import okhttp3.logging.HttpLoggingInterceptor;
  * For Prominent Developers, Faridabad (India)
  */
 
-public class FragmentADRedsox extends FragmentBase {
+public class FragmentADGallery extends FragmentBase {
 
-    LinearLayoutManager manager;
+    StaggeredGridLayoutManager manager;
     RecyclerView rv_f_redsox_recycler;
     SwipeRefreshLayout swipeContainer;
     ArrayList<ModelFanPosts> modelFanPostsArrayList = new ArrayList<>();
-    AdapterFanPosts adapter;
+    GalleryAdapter adapter;
     LinearLayout no_connection_ll;
     TextView no_connection_text;
     Interceptor cacheInterceptor = new Interceptor() {
         @Override
-        public okhttp3.Response intercept(Chain chain) throws IOException {
+        public Response intercept(Chain chain) throws IOException {
 
             CacheControl.Builder cacheBuilder = new CacheControl.Builder();
             cacheBuilder.maxAge(0, TimeUnit.SECONDS);
@@ -79,7 +78,7 @@ public class FragmentADRedsox extends FragmentBase {
                         .cacheControl(cacheControl)
                         .build();
             }
-            okhttp3.Response originalResponse = chain.proceed(request);
+            Response originalResponse = chain.proceed(request);
             if (hasNetwork(getActivity())) {
                 int maxAge = 60; // read from cache
                 return originalResponse.newBuilder()
@@ -99,10 +98,10 @@ public class FragmentADRedsox extends FragmentBase {
     private int visibleThreshold = 2;
     private boolean loading = false;
 
-    public static FragmentADRedsox newInstance(int i) {
+    public static FragmentADGallery newInstance(int i) {
         Bundle args = new Bundle();
         args.putInt("tab", i);
-        FragmentADRedsox fragment = new FragmentADRedsox();
+        FragmentADGallery fragment = new FragmentADGallery();
         fragment.setArguments(args);
         return fragment;
     }
@@ -124,18 +123,19 @@ public class FragmentADRedsox extends FragmentBase {
         no_connection_text = view.findViewById(R.id.no_connection_text);
         rv_f_redsox_recycler = view.findViewById(R.id.rv_f_redsox_recycler);
         swipeContainer = view.findViewById(R.id.swipeContainer);
-        rv_f_redsox_recycler.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL));
+        //rv_f_redsox_recycler.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL));
 
         rv_f_redsox_recycler.setHasFixedSize(true);
-        manager = new LinearLayoutManager(context);
+        manager = new StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL);
         rv_f_redsox_recycler.setLayoutManager(manager);
         rv_f_redsox_recycler.setItemAnimator(new DefaultItemAnimator());
-        adapter = new AdapterFanPosts(context, modelFanPostsArrayList, new AdapterFanPosts.RecyclerViewClickListener() {
+        adapter = new GalleryAdapter(context, modelFanPostsArrayList, new GalleryAdapter.RecyclerViewClickListener() {
             @Override
             public void onItemClickListener(View v, int position) {
-                ModelFanPosts singleModelFanPosts = adapter.getAllModelPost().get(position);
-                startActivity(new Intent(context, ActivityFanPostDetails.class)
-                        .putExtra("nid", singleModelFanPosts.getNid()));
+                Intent intent = new Intent(getActivity(), ViewImageActivity.class);
+                intent.putExtra("posts", modelFanPostsArrayList);
+                intent.putExtra("position", position);
+                startActivity(intent);
             }
         });
         rv_f_redsox_recycler.setAdapter(adapter);
@@ -159,7 +159,7 @@ public class FragmentADRedsox extends FragmentBase {
             @Override
             public void onRefresh() {
                 swipeContainer.setRefreshing(false);
-                scrollListener.resetValues(manager);
+                //scrollListener.resetValues(manager);
                 requestNewsList(0, true);
             }
         });
@@ -178,14 +178,14 @@ public class FragmentADRedsox extends FragmentBase {
     }
 
     private void requestNewsList(final int pageNumber, final boolean swipeRefresh) {
-        String url = "";
-        if (tab == 0) {
+        String url = "redsox";
+      /*  if (tab == 0) {
             url = "redsox";
         } else if (tab == 1) {
             url = "eagles";
         } else if (tab == 2) {
             url = "patriots";
-        }
+        }*/
 
 
         response_error = "";
@@ -404,7 +404,6 @@ public class FragmentADRedsox extends FragmentBase {
                             .build();
 
 
-
                     request = request.newBuilder()
                             .cacheControl(cc)
                             .build();
@@ -443,4 +442,5 @@ public class FragmentADRedsox extends FragmentBase {
             }
         };
     }
+
 }

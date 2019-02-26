@@ -84,6 +84,8 @@ public class FragmentADHome extends FragmentBase {
                     return FragmentADRedsox.newInstance(1);
                 case 2:
                     return FragmentADRedsox.newInstance(2);
+                case 3:
+                    return new FragmentADGallery();
                 default:
                     return FragmentADRedsox.newInstance(0);
             }
@@ -91,7 +93,7 @@ public class FragmentADHome extends FragmentBase {
 
         @Override
         public int getCount() {
-            return 3;
+            return 4;
         }
 
         @Nullable
@@ -104,6 +106,8 @@ public class FragmentADHome extends FragmentBase {
                     return "EAGLES";
                 case 2:
                     return "PATRIOTS";
+                case 3:
+                    return "GALLERY";
                 default:
                     return "REDSOX";
             }
