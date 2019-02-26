@@ -60,6 +60,12 @@
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/navigation_header"
         />
-
+<LinearLayout
+    android:id="@+id/llRightMenu"
+    android:layout_width="240dp"
+    android:orientation="vertical"
+    android:background="@color/app_white"
+    android:layout_height="match_parent"
+    android:layout_gravity="right"></LinearLayout>
 </android.support.v4.widget.DrawerLayout>
 
