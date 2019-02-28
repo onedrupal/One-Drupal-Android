@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name">Blog</string>
     <string name="file_uri" translatable="false">com.prominentdev.blog.provider</string>
-    <string name="client_id">247888764514-jmrglokg9o7qelq7cq62dalvjb9a130u.apps.googleusercontent.com</string>
     <string name="content_description">Image</string>
     <string name="back_pressed">Please click BACK again to exit from app</string>
     <string name="signout">Signout</string>

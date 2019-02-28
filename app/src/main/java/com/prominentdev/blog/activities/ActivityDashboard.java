@@ -301,7 +301,7 @@ public class ActivityDashboard extends ActivityBase {
     }
     private void googleSignInInit() {
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.client_id))
+                .requestIdToken(BuildConfig.google_auth_client_id)
                 .requestEmail()
                 .build();
         // Build a GoogleSignInClient with the options specified by gso.

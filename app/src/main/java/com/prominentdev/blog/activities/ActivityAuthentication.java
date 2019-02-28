@@ -67,7 +67,7 @@ import static com.prominentdev.blog.models.ConstantData.PROFILE_PICTURE;
 
 public class ActivityAuthentication extends ActivityBase implements View.OnClickListener {
 
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "ActivityAuthentication";
     private static final int RC_SIGN_IN = 1;
     SignInButton signInButton;
     GoogleSignInClient mGoogleSignInClient;
@@ -88,7 +88,7 @@ public class ActivityAuthentication extends ActivityBase implements View.OnClick
 
     private void googleSignInInit() {
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.client_id))
+                .requestIdToken(BuildConfig.google_auth_client_id)
                 .requestEmail()
                 .build();
 
@@ -175,7 +175,7 @@ public class ActivityAuthentication extends ActivityBase implements View.OnClick
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
-            Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
+            Log.w(TAG, "signInResult:failed code=" + e.getStatusCode()+e.getMessage());
             updateUI(null, false);
             Toast.makeText(context, "Please try again!", Toast.LENGTH_SHORT).show();
         }

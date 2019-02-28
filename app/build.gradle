@@ -1,5 +1,14 @@
 apply plugin: 'com.android.application'
 
+// Load keystore
+def keystorePropertiesFile = rootProject.file("keystore.properties");
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
+def apikeyPropertiesFile = rootProject.file("apikey.properties");
+def apikeyProperties = new Properties()
+apikeyProperties.load(new FileInputStream(apikeyPropertiesFile))
+
 android {
     compileSdkVersion 28
     buildToolsVersion '27.0.3'
@@ -11,6 +20,7 @@ android {
         versionName "1.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
+        buildConfigField("String", "google_auth_client_id", apikeyProperties['google_auth_client_id'])
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -19,16 +29,16 @@ android {
     // Signing configs
     signingConfigs {
         release {
-            storeFile file('Blog.jks')
-            storePassword "blogger"
-            keyAlias "blogger"
-            keyPassword "blogger"
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
         }
         debug {
-            storeFile file('Blog.jks')
-            storePassword "blogger"
-            keyAlias "blogger"
-            keyPassword "blogger"
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
         }
     }
 
