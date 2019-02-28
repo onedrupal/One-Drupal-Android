@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,10 +80,16 @@ public class AdapterFanPosts extends RecyclerView.Adapter<RecyclerView.ViewHolde
             itemListHolder.tv_row_fan_post_title.setText(Html.fromHtml(singleModelFanPosts.getTitle()));
             itemListHolder.tv_row_fan_post_category.setText(singleModelFanPosts.getField_text_category());
             itemListHolder.tv_row_fan_post_body.setText(Html.fromHtml(singleModelFanPosts.getBody()));
-            /*Glide
-                    .with(itemListHolder.iv_row_fan_post_image)
-                    .load(singleModelFanPosts.getField_image())
-                    .into(itemListHolder.iv_row_fan_post_image);*/
+            String image_url = singleModelFanPosts.getField_image();
+            if(!image_url.isEmpty()){
+                itemListHolder.iv_row_fan_post_image.setVisibility(View.VISIBLE);
+                //Log.e("getField_image", "getField_image " + singleModelFanPosts.getField_image());
+                Glide
+                        .with(itemListHolder.iv_row_fan_post_image)
+                        .load(singleModelFanPosts.getField_image())
+                        .into(itemListHolder.iv_row_fan_post_image);
+            }
+
         } else {
             LoadingViewHolder loadingViewHolder = (LoadingViewHolder) vho;
             loadingViewHolder.pr_progress.isSpinning();

@@ -100,9 +100,9 @@ public class ActivityFanPostDetails extends ActivityBase {
                         tv_a_fan_post_details_title.setText(modelFanPosts.getTitle());
                         tv_a_fan_post_details_body.setText(Html.fromHtml(modelFanPosts.getBody()));
                         tv_a_fan_post_details_category.setText(modelFanPosts.getField_text_category());
-                        /*Glide.with(context)
-                                .load(image.getJSONObject(0).getString("url"))
-                                .into(iv_a_fan_post_details_image);*/
+                        Glide.with(context)
+                                .load(modelFanPosts.getField_image())
+                                .into(iv_a_fan_post_details_image);
                     }
                 } catch (Exception e) {
                     response_error = getString(R.string.unable_to_connect);
