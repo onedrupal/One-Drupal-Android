@@ -3,7 +3,7 @@
 
 To manage your Drupal site through this app, You need to install https://www.drupal.org/project/one_api module in your Drupal 8 Site
 
-Create & edit nodes, upload images....<br/>
+Login, Create & edit nodes, Upload images, Publish, Unpublish, Promote to front page, remove from front page(Demote)....<br/>
 
 
 
