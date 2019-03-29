@@ -3,7 +3,14 @@
 
 To manage your Drupal site through this app, You need to install https://www.drupal.org/project/one_api module in your Drupal 8 Site
 
-Login, Create & edit nodes, Upload images, Publish, Unpublish, Promote to front page, remove from front page(Demote)....<br/>
+## Features
+* Login, 
+* Create & edit nodes, 
+* Upload images, 
+* Publish, Unpublish, 
+* Promote to front page, remove from front page(Demote), 
+* API paging - lazy load - scroll up to pull new content - scroll down to pull more content....
+<br/>
 
 ## Contribution
  * GNU AFFERO GENERAL PUBLIC LICENSE
