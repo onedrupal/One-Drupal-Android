@@ -5,6 +5,10 @@ To manage your Drupal site through this app, You need to install https://www.dru
 
 Login, Create & edit nodes, Upload images, Publish, Unpublish, Promote to front page, remove from front page(Demote)....<br/>
 
+## Contribution
+ * GNU AFFERO GENERAL PUBLIC LICENSE
+ * Copyright and license notices must be preserved.
+ * When a modified version is used to provide a service over a network, the complete source code of the modified version must be made available.
 
 
 <img src="https://raw.githubusercontent.com/onedrupal/One-Drupal-Android/master/screenshots/blog_screen1_google_signin.png" width="300px"/>
