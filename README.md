@@ -12,6 +12,14 @@ To manage your Drupal site through this app, You need to install https://www.dru
 * API paging - lazy load - scroll up to pull new content - scroll down to pull more content....
 <br/>
 
+## Fields
+* Node title
+* Text (formatted, long)
+* Image
+* Link
+* Video Embed
+<br/>
+
 ## Contribution
  * GNU AFFERO GENERAL PUBLIC LICENSE
  * Copyright and license notices must be preserved.
