@@ -1,8 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2019. Nikhil Dubbaka from TechNikh.com under GNU AFFERO GENERAL PUBLIC LICENSE
+  ~ Copyright and license notices must be preserved.
+  ~ When a modified version is used to provide a service over a network, the complete source code of the modified version must be made available.
+  -->
+
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.prominentdev.blog">
+    package="com.technikh.onedrupal">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -15,19 +25,25 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:usesCleartextTraffic="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".activities.ViewImageActivity"></activity>
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true">
+        <service android:name=".authenticator.AuthenticatorService">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
+
+        <activity android:name=".activities.ViewImageActivity" />
         <activity
             android:name=".activities.ActivitySplash"
             android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait"></activity>
-        <activity
-            android:name=".activities.ActivityAuthentication"
-            android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activities.ActivityDashboard"
+            android:name=".activities.ActivityAuthentication"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -35,7 +51,18 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="*/*" />
+            </intent-filter>
         </activity>
+        <activity
+            android:name=".activities.ActivityDashboard"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activities.ActivityPost"
             android:configChanges="keyboardHidden|orientation"
@@ -57,13 +84,26 @@
 
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.prominentdev.blog.provider"
+            android:authorities="com.technikh.onedrupal.provider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
+
+        <activity
+            android:name=".activities.SiteLoginActivity"
+            android:label="@string/title_activity_site_login" />
+        <activity
+            android:name=".activities.SharedDataReceiverActivity"
+            android:label="@string/title_activity_SharedDataReceiver">
+        </activity>
+        <activity android:name=".activities.FeaturedSitesActivity" />
+        <activity
+            android:name=".activities.SiteContentTabsActivity"
+            android:label="@string/title_activity_site_content_tabs"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>

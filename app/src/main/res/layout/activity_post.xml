@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2019. Nikhil Dubbaka from TechNikh.com under GNU AFFERO GENERAL PUBLIC LICENSE
+  ~ Copyright and license notices must be preserved.
+  ~ When a modified version is used to provide a service over a network, the complete source code of the modified version must be made available.
+  -->
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -10,11 +16,10 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/color_white"
-        android:minHeight="?android:attr/actionBarSize"
-        android:theme="@style/ToolBarStyle"
-        app:titleTextColor="@color/app_white" />
+        android:layout_height="?android:attr/actionBarSize"
+        android:background="@color/app_white"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:titleTextColor="@color/color_primary_text" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -33,10 +38,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-
+<!--
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/dimen_8dp" />
+                    android:layout_height="@dimen/dimen_8dp" /> -->
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -53,30 +58,34 @@
                             android:id="@+id/et_f_post"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="@string/write_something_here"
+                            android:hint="@string/help_node_title"
                             android:inputType="textCapSentences"
                             android:text=""
                             android:textAppearance="?android:attr/textAppearanceSmall"
                             android:textColor="@color/color_secondary_text_dark"
                             android:textColorHint="@color/color_secondary_text"
                             app:fontFamily="@font/sf_regular"
-                            tools:text="@string/write_something_here" />
+                            tools:text="@string/help_node_title" />
                     </android.support.design.widget.TextInputLayout>
 
                     <View
                         android:layout_width="@dimen/dimen_8dp"
                         android:layout_height="match_parent" />
 
-                    <ImageView
+                    <Button
                         android:id="@+id/iv_f_post_image"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:background="@android:drawable/ic_menu_camera"
                         android:contentDescription="@string/content_description"
-                        android:src="@drawable/ic_photo" />
+                        android:text="Upload"
+                        android:visibility="gone" />
                 </LinearLayout>
 
                 <RelativeLayout
                     android:layout_width="match_parent"
+                    android:id="@+id/layout_body"
+                    android:visibility="gone"
                     android:layout_height="250dp">
 
                 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -207,52 +216,121 @@
 
             </LinearLayout>
 
-            <com.prominentdev.blog.widgets.SFImageViewSquare
+            <com.technikh.onedrupal.widgets.SFImageViewSquare
                 android:id="@+id/iv_f_post_preview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:scaleType="centerCrop"
                 android:contentDescription="@string/content_description"
+                android:visibility="gone"
                 android:src="@drawable/ic_photo" />
-
-            <RadioGroup
-                android:id="@+id/radioGroup"
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:orientation="vertical">
+                android:layout_weight="1">
 
-                <RadioButton
-                    android:id="@+id/rb_f_post_redsox"
-                    android:layout_width="wrap_content"
+                <EditText
+                    android:id="@+id/et_remote_image_url"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/redsox"
+                    android:hint="@string/et_remote_image"
+                    android:inputType="textCapSentences"
+                    android:text=""
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/color_secondary_text_dark"
-                    app:fontFamily="@font/sf_regular" />
+                    android:textColorHint="@color/color_secondary_text"
+                    app:fontFamily="@font/sf_regular"
+                    android:visibility="gone"
+                    tools:text="@string/et_remote_image" />
+            </android.support.design.widget.TextInputLayout>
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
 
-                <RadioButton
-                    android:id="@+id/rb_f_post_eagles"
-                    android:layout_width="wrap_content"
+                <EditText
+                    android:id="@+id/et_remote_page_url"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/eagles"
+                    android:hint="@string/et_remote_page"
+                    android:inputType="textCapSentences"
+                    android:text=""
+                    android:visibility="gone"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/color_secondary_text_dark"
-                    app:fontFamily="@font/sf_regular" />
+                    android:textColorHint="@color/color_secondary_text"
+                    app:fontFamily="@font/sf_regular"
+                    tools:text="@string/et_remote_page" />
+            </android.support.design.widget.TextInputLayout>
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
 
-                <RadioButton
-                    android:id="@+id/rb_f_post_patriots"
-                    android:layout_width="wrap_content"
+                <EditText
+                    android:id="@+id/et_remote_video_url"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/patriots"
+                    android:hint="@string/et_remote_video"
+                    android:inputType="textCapSentences"
+                    android:text=""
+                    android:visibility="gone"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/color_secondary_text_dark"
-                    app:fontFamily="@font/sf_regular" />
+                    android:textColorHint="@color/color_secondary_text"
+                    app:fontFamily="@font/sf_regular"
+                    tools:text="@string/et_remote_video" />
+            </android.support.design.widget.TextInputLayout>
+          <!--  <CheckBox
+                android:id="@+id/checkBoxPublished"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Published" />
 
-            </RadioGroup>
+            <CheckBox
+                android:id="@+id/checkBoxPromoted"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Promoted" />
+
+                        <RadioGroup
+                            android:id="@+id/radioGroup"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:orientation="vertical">
+
+                            <RadioButton
+                                android:id="@+id/rb_f_post_redsox"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/redsox"
+                                android:textAppearance="?android:attr/textAppearanceSmall"
+                                android:textColor="@color/color_secondary_text_dark"
+                                app:fontFamily="@font/sf_regular" />
+
+                            <RadioButton
+                                android:id="@+id/rb_f_post_eagles"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/eagles"
+                                android:textAppearance="?android:attr/textAppearanceSmall"
+                                android:textColor="@color/color_secondary_text_dark"
+                                app:fontFamily="@font/sf_regular" />
+
+                            <RadioButton
+                                android:id="@+id/rb_f_post_patriots"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/patriots"
+                                android:textAppearance="?android:attr/textAppearanceSmall"
+                                android:textColor="@color/color_secondary_text_dark"
+                                app:fontFamily="@font/sf_regular" />
+
+                        </RadioGroup> -->
         </LinearLayout>
 
     </ScrollView>

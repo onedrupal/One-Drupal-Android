@@ -1,5 +1,11 @@
 apply plugin: 'com.android.application'
 
+/*
+ * Copyright (c) 2019. Nikhil Dubbaka from TechNikh.com under GNU AFFERO GENERAL PUBLIC LICENSE
+ * Copyright and license notices must be preserved.
+ * When a modified version is used to provide a service over a network, the complete source code of the modified version must be made available.
+ */
+
 // Load keystore
 def keystorePropertiesFile = rootProject.file("keystore.properties");
 def keystoreProperties = new Properties()
@@ -13,14 +19,17 @@ android {
     compileSdkVersion 28
     buildToolsVersion '27.0.3'
     defaultConfig {
-        applicationId "com.prominentdev.blog"
+        applicationId "com.technikh.onedrupal"
         minSdkVersion 16
         targetSdkVersion 28
-        versionCode 2
+        versionCode 1
         versionName "1.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         buildConfigField("String", "google_auth_client_id", apikeyProperties['google_auth_client_id'])
+        buildConfigField("String", "DEMO_SITE_URL", apikeyProperties['demo_site_url'])
+        buildConfigField("String", "DEMO_SITE_USERNAME", apikeyProperties['demo_site_username'])
+        buildConfigField("String", "DEMO_SITE_PASSWORD", apikeyProperties['demo_site_password'])
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -48,8 +57,6 @@ android {
             debuggable false
             signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            buildConfigField("String", "API_ENPOINT", "\"http://shankarpally-portal.eschool2go.com/index.php/\"")
-            buildConfigField("String", "WEB_ENDPOINT", "\"http://shankarpally-portal.eschool2go.com/\"")
             buildConfigField("String", "PLATFORM", "\"AND\"")
         }
         debug {
@@ -58,8 +65,6 @@ android {
             debuggable true
             signingConfig signingConfigs.debug
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            buildConfigField("String", "API_ENPOINT", "\"http://shankarpally-portal.eschool2go.com/index.php/\"")
-            buildConfigField("String", "WEB_ENDPOINT", "\"http://shankarpally-portal.eschool2go.com/\"")
             buildConfigField("String", "API_KEY", "\"test\"")
             buildConfigField("String", "PLATFORM", "\"AND\"")
             buildConfigField("String", "AUTH_BASIC_KEY", "\"tipkart\"")
@@ -76,7 +81,7 @@ dependencies {
     implementation 'com.android.support:design:28.0.0'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     implementation 'com.android.support:recyclerview-v7:28.0.0'
-    implementation 'com.google.android.gms:play-services-auth:16.0.1'
+    //implementation 'com.google.android.gms:play-services-auth:16.0.1'
     implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
     implementation 'com.github.bumptech.glide:glide:4.6.1'
     //implementation 'com.mcxiaoke.volley:library-aar:1.0.0'
@@ -90,11 +95,14 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.3.0'
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.github.mthli:Knife:v1.1'
-    compile 'com.squareup.okhttp3:logging-interceptor:3.10.0'
-    compile 'com.squareup.okhttp3:okhttp:3.13.1'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.10.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.13.1'
     implementation 'com.bogdwellers:pinchtozoom:0.1'
-    compile 'com.github.bmelnychuk:atv:1.2.+'
-    compile 'com.annimon:stream:1.2.1'
+    implementation 'com.github.bmelnychuk:atv:1.2.+'
+    implementation 'com.annimon:stream:1.2.1'
 
 
+    implementation 'com.google.firebase:firebase-core:11.8.0'
 }
+
+apply plugin: 'com.google.gms.google-services'

@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2019. Nikhil Dubbaka from TechNikh.com under GNU AFFERO GENERAL PUBLIC LICENSE
+  ~ Copyright and license notices must be preserved.
+  ~ When a modified version is used to provide a service over a network, the complete source code of the modified version must be made available.
+  -->
+
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cl_row_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:maxHeight="400dp"
@@ -28,7 +35,17 @@
         app:layout_constraintStart_toEndOf="@id/iv_row_fan_post_user_image"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Name" />
-
+    <Button
+        android:id="@+id/tv_row_read_more"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/dimen_8dp"
+        android:layout_marginStart="@dimen/dimen_8dp"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        app:fontFamily="@font/sf_regular"
+        app:layout_constraintStart_toEndOf="@id/iv_row_fan_post_user_image"
+        app:layout_constraintTop_toBottomOf="@id/tv_row_fan_post_title"
+        android:text="View Post" />
     <TextView
         android:id="@+id/tv_row_fan_post_category"
         android:layout_width="wrap_content"
@@ -39,10 +56,23 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="@color/color_secondary_text"
         app:fontFamily="@font/sf_regular"
+        android:visibility="gone"
         app:layout_constraintStart_toEndOf="@id/iv_row_fan_post_user_image"
         app:layout_constraintTop_toBottomOf="@id/tv_row_fan_post_title"
         tools:text="Redsox" />
-
+    <com.technikh.onedrupal.widgets.SFImageViewSquare
+        android:id="@+id/iv_row_fan_post_image"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginTop="@dimen/dimen_8dp"
+        android:contentDescription="@string/content_description"
+        android:scaleType="centerCrop"
+        android:src="@mipmap/ic_launcher"
+        android:adjustViewBounds="true"
+        android:maxHeight="150dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_row_read_more" />
     <TextView
         android:id="@+id/tv_row_fan_post_body"
         android:layout_width="wrap_content"
@@ -52,19 +82,9 @@
         android:textColor="@color/color_primary_text"
         app:fontFamily="@font/sf_regular"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/iv_row_fan_post_user_image"
+        app:layout_constraintTop_toBottomOf="@id/iv_row_fan_post_image"
         tools:text="Blog post coming from APIs" />
 
-    <com.prominentdev.blog.widgets.SFImageViewSquare
-        android:id="@+id/iv_row_fan_post_image"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dimen_8dp"
-        android:contentDescription="@string/content_description"
-        android:scaleType="centerCrop"
-        android:src="@mipmap/ic_launcher"
-        android:visibility="gone"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_row_fan_post_body" />
+
 
 </android.support.constraint.ConstraintLayout>

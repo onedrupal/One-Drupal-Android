@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2019. Nikhil Dubbaka from TechNikh.com under GNU AFFERO GENERAL PUBLIC LICENSE
+  ~ Copyright and license notices must be preserved.
+  ~ When a modified version is used to provide a service over a network, the complete source code of the modified version must be made available.
+  -->
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -14,7 +20,39 @@
         android:background="@color/app_white"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:titleTextColor="@color/color_primary_text" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
+        <Button
+            android:id="@+id/btnPostEdit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onClickBtnNodeEdit"
+            android:layout_weight="1"
+            android:text="Edit" />
+        <Button
+            android:id="@+id/btnPostActionPublish"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onClickBtnNodeActionPublish"
+            android:layout_weight="1"
+            android:text="Publish" />
+        <Button
+            android:id="@+id/btnPostActionPromote"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onClickBtnNodeActionPromote"
+            android:layout_weight="1"
+            android:text="Promote" />
+     <!--   <Button
+            android:id="@+id/btnPostDelete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Delete" /> -->
+    </LinearLayout>
     <ScrollView
         android:id="@+id/sv_main"
         android:layout_width="match_parent"
@@ -57,11 +95,22 @@
                     app:layout_constraintStart_toEndOf="@id/iv_a_fan_post_details_user_image"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="Name" />
-
+                <Button
+                    android:id="@+id/tv_row_read_more"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:layout_marginLeft="@dimen/dimen_8dp"
+                    android:layout_marginStart="@dimen/dimen_8dp"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    app:fontFamily="@font/sf_regular"
+                    app:layout_constraintStart_toEndOf="@id/iv_a_fan_post_details_user_image"
+                    app:layout_constraintTop_toBottomOf="@id/tv_a_fan_post_details_title" />
                 <TextView
                     android:id="@+id/tv_a_fan_post_details_category"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:visibility="gone"
                     android:layout_marginLeft="@dimen/dimen_8dp"
                     android:layout_marginStart="@dimen/dimen_8dp"
                     android:layout_marginTop="@dimen/dimen_8dp"
@@ -84,7 +133,7 @@
                     app:layout_constraintTop_toBottomOf="@id/iv_a_fan_post_details_user_image"
                     tools:text="Blog post coming from APIs" />
 
-                <com.prominentdev.blog.widgets.SFImageViewSquare
+                <com.technikh.onedrupal.widgets.SFImageViewSquare
                     android:id="@+id/iv_a_fan_post_details_image"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
