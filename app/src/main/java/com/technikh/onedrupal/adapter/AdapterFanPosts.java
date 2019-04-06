@@ -25,6 +25,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.pnikosis.materialishprogress.ProgressWheel;
 import com.technikh.onedrupal.R;
+import com.technikh.onedrupal.activities.ActivityFanPostDetails;
 import com.technikh.onedrupal.app.MyApplication;
 import com.technikh.onedrupal.models.ModelFanPosts;
 
@@ -106,6 +107,7 @@ public class AdapterFanPosts extends RecyclerView.Adapter<RecyclerView.ViewHolde
             String video_url = singleModelFanPosts.field_video;
             if(!video_url.isEmpty()) {
                 itemListHolder.tv_row_read_more.setText("Watch Video...");
+                itemListHolder.tv_row_read_more.setVisibility(View.VISIBLE);
                 itemListHolder.tv_row_read_more.setOnClickListener(new View.OnClickListener() {
 
                     public void onClick(View v) {
@@ -119,6 +121,7 @@ public class AdapterFanPosts extends RecyclerView.Adapter<RecyclerView.ViewHolde
             String remote_page_url = singleModelFanPosts.field_remote_page;
             if(!remote_page_url.isEmpty()) {
                 itemListHolder.tv_row_read_more.setText("Read More...");
+                itemListHolder.tv_row_read_more.setVisibility(View.VISIBLE);
                 itemListHolder.tv_row_read_more.setOnClickListener(new View.OnClickListener() {
 
                     public void onClick(View v) {
@@ -129,6 +132,16 @@ public class AdapterFanPosts extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     }
                 });
             }
+            /*itemListHolder.tv_row_view_post.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    //ModelFanPosts singleModelFanPosts = adapter.getAllModelPost().get(position);
+                    MyApplication.getAppContext().startActivity(new Intent(context, ActivityFanPostDetails.class)
+                            .putExtra("nid", singleModelFanPosts.getNid())
+                            .putExtra("SiteProtocol", )
+                            .putExtra("SiteDomain", mSiteDomain)
+                    );
+                }
+            });*/
 
 
         } else {
@@ -151,7 +164,7 @@ public class AdapterFanPosts extends RecyclerView.Adapter<RecyclerView.ViewHolde
         private ImageView iv_row_fan_post_user_image, iv_row_fan_post_image;
         private TextView tv_row_fan_post_title, tv_row_fan_post_category, tv_row_fan_post_body;
         private ConstraintLayout cl_row_layout;
-        private Button tv_row_read_more;
+        private Button tv_row_read_more,tv_row_view_post;
 
         ItemListHolder(View view) {
             super(view);
@@ -162,9 +175,11 @@ public class AdapterFanPosts extends RecyclerView.Adapter<RecyclerView.ViewHolde
             this.tv_row_fan_post_title = view.findViewById(R.id.tv_row_fan_post_title);
             this.tv_row_fan_post_category = view.findViewById(R.id.tv_row_fan_post_category);
             this.tv_row_read_more = view.findViewById(R.id.tv_row_read_more);
+            this.tv_row_view_post = view.findViewById(R.id.tv_row_view_post);
             this.tv_row_fan_post_body = view.findViewById(R.id.tv_row_fan_post_body);
             view.setOnClickListener(this);
             this.tv_row_read_more.setOnClickListener(this);
+            this.tv_row_view_post.setOnClickListener(this);
         }
 
         @Override

@@ -53,8 +53,10 @@ public class AddCookiesInterceptor implements Interceptor {
         }
         // X-CSRF-Token
         AuthPreferences mAuthPreferences = new AuthPreferences(context);
-        Log.d(TAG, "intercept: mAuthPreferences.getAuthToken() "+mAuthPreferences.getAuthToken());
-        builder.addHeader("X-CSRF-Token", mAuthPreferences.getAuthToken());
+        //Log.d(TAG, "intercept: mAuthPreferences.getAuthToken() "+mAuthPreferences.getAuthToken());
+        if(mAuthPreferences != null && mAuthPreferences.getAuthToken() != null) {
+            builder.addHeader("X-CSRF-Token", mAuthPreferences.getAuthToken());
+        }
 
         return chain.proceed(builder.build());
     }

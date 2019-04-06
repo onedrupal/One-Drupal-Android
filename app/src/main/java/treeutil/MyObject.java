@@ -7,16 +7,26 @@ package treeutil;
  */
 
 public class MyObject { // The actual object
-    public String parentId;
-    public String id;
+    public int parentId;
+    public int tid;
     public String name;
+    public String vocabularyId;
+    public Boolean isSelected = false;
 
-    public String getParentId() {
+    /*public String getParentId() {
         return parentId;
     }
 
     public void setParentId(String parentId) {
         this.parentId = parentId;
+    }*/
+
+    public Boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(Boolean selected) {
+        this.isSelected = selected;
     }
 
 

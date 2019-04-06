@@ -43,6 +43,7 @@ import android.view.ViewGroup;
 
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,14 +59,32 @@ import com.technikh.onedrupal.models.Site;
 import com.technikh.onedrupal.network.GetSiteDataService;
 import com.technikh.onedrupal.network.RetrofitSiteInstance;
 import com.technikh.onedrupal.util.AccountUtils;
+import com.unnamed.b.atv.model.TreeNode;
+import com.unnamed.b.atv.view.AndroidTreeView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import okhttp3.Cache;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import treeutil.MyObject;
+import treeutil.Node;
+import treeutil.Tree;
+import treeutil.TreeHolder;
 
 import static com.technikh.onedrupal.network.AddCookiesInterceptor.APP_PREFERENCES;
 
@@ -161,8 +180,7 @@ public class SiteContentTabsActivity extends AppCompatActivity {
 
                     Bundle fbundle = new Bundle();
                     fbundle.putString(FirebaseAnalytics.Param.ITEM_NAME, mAuthPreferences.getPrimarySiteUrl());
-                    fbundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "logout");
-                    mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, fbundle);
+                    mFirebaseAnalytics.logEvent("ACCOUNT_LOGOUT_AUTH", fbundle);
 
                     finish();
                     break;
@@ -352,7 +370,6 @@ public class SiteContentTabsActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });*/
-
     }
 
 /*
@@ -378,6 +395,7 @@ public class SiteContentTabsActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 */
+
     /**
      * A placeholder fragment containing a simple view.
      */

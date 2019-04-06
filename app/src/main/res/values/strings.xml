@@ -12,6 +12,8 @@
     <string name="signout">Signout</string>
     <string name="check_internet_connection">Please check internet connectivity</string>
     <string name="help_node_title">Node Title:</string>
+    <string name="help_search_box">Search content</string>
+
     <string name="redsox">Redsox</string>
     <string name="eagles">Eagles</string>
     <string name="patriots">Patriots</string>
@@ -98,5 +100,8 @@
     <string name="tab_text_3">Tab 3</string>
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
+
+    <string name="ic_keyboard_arrow_right">&#xe0c7;</string>
+    <string name="ic_keyboard_arrow_down">&#xe0c5;</string>
 
 </resources>

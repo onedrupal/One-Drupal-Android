@@ -11,6 +11,8 @@ import android.database.Observable;
 import com.technikh.onedrupal.models.ModelNodeType;
 import com.technikh.onedrupal.models.SettingsTypeList;
 import com.technikh.onedrupal.models.SiteList;
+import com.technikh.onedrupal.models.VocabTermsList;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -30,4 +32,7 @@ public interface GetSiteDataService {
 
     @GET("/node/{editNid}?_format=json")
     Call<ModelNodeType> getNode(@Path("editNid") String nid);
+
+    @GET("/onedrupal/api/v1/vocabulary/{vocabName}")
+    Call<VocabTermsList> getTaxonomyVocab(@Path("vocabName") String vocabName);
 }

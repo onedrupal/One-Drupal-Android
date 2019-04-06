@@ -176,9 +176,7 @@ public class SiteLoginActivity extends AccountAuthenticatorActivity {
     public void onClickBtnViewFeaturedSite(View v)
     {
         Bundle bundle = new Bundle();
-        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "FeaturedSite");
-        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "button");
-        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+        mFirebaseAnalytics.logEvent("CLICK_BTN_FEATURED_SITE2", bundle);
 
         Intent intent = new Intent(this, FeaturedSitesActivity.class);
         startActivity(intent);
@@ -191,6 +189,8 @@ public class SiteLoginActivity extends AccountAuthenticatorActivity {
         mSiteProtocolSpinner.setSelection(protocolsArray.indexOf("https://"));
         mUsernameView.setText(BuildConfig.DEMO_SITE_USERNAME);
         mPasswordView.setText(BuildConfig.DEMO_SITE_PASSWORD);
+        Bundle bundle = new Bundle();
+        mFirebaseAnalytics.logEvent("CLICK_BTN_DEMO_LOGIN2", bundle);
     }
 
     /**
@@ -368,8 +368,7 @@ public class SiteLoginActivity extends AccountAuthenticatorActivity {
 
                 Bundle fbundle = new Bundle();
                 fbundle.putString(FirebaseAnalytics.Param.ITEM_NAME, mSiteUrl.getText().toString());
-                fbundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "addAccountLogin");
-                mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, fbundle);
+                mFirebaseAnalytics.logEvent("ACCOUNT_ADD_LOGIN", fbundle);
             }else{
                 mAccountManager.setPassword(account, accountPassword);
             }
@@ -439,8 +438,7 @@ public class SiteLoginActivity extends AccountAuthenticatorActivity {
 
                         Bundle fbundle = new Bundle();
                         fbundle.putString(FirebaseAnalytics.Param.ITEM_NAME, mAuthPreferences.getPrimarySiteUrl());
-                        fbundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "SettingsApiFail");
-                        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, fbundle);
+                        mFirebaseAnalytics.logEvent("SETTINGS_API_FAIL", fbundle);
                         //Toast.makeText(MyApplication.getAppContext(), "onResponse: is not Successful", Toast.LENGTH_SHORT).show();
                     }
                     pd.dismiss();
@@ -457,8 +455,7 @@ public class SiteLoginActivity extends AccountAuthenticatorActivity {
                     Log.d(TAG, "onFailure: "+t.toString());
                     Bundle fbundle = new Bundle();
                     fbundle.putString(FirebaseAnalytics.Param.ITEM_NAME, mAuthPreferences.getPrimarySiteUrl());
-                    fbundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "SettingsApiFailThrow");
-                    mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, fbundle);
+                    mFirebaseAnalytics.logEvent("SETTINGS_API_THROW", fbundle);
                     //Toast.makeText(MyApplication.getAppContext(), "Something went wrong...Please try later!", Toast.LENGTH_SHORT).show();
                 }
             });

@@ -17,7 +17,7 @@ import com.unnamed.b.atv.model.TreeNode;
 
 import java.util.logging.Level;
 
-public class TreeHolder extends TreeNode.BaseNodeViewHolder<String> {
+public class TreeHolder extends TreeNode.BaseNodeViewHolder<MyObject> {
     int level;
 
     public TreeHolder(Context context, int level) {
@@ -26,17 +26,17 @@ public class TreeHolder extends TreeNode.BaseNodeViewHolder<String> {
     }
 
     @Override
-    public View createNodeView(TreeNode node, String value) {
+    public View createNodeView(TreeNode node, MyObject value) {
         final LayoutInflater inflater = LayoutInflater.from(context);
         final View view = inflater.inflate(R.layout.layout_node, null, false);
         View leadingView = view.findViewById(R.id.leadingView);
         if (level != 0) {
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(dpToPx(25*level),dpToPx(25));
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(dpToPx(50*level),dpToPx(25));
 
             leadingView.setLayoutParams(layoutParams);
         }
         TextView tvValue = (TextView) view.findViewById(R.id.node_value);
-        tvValue.setText(value + level);
+        tvValue.setText(value.name + level);
         return view;
     }
 

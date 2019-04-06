@@ -18,10 +18,10 @@ import java.util.Map;
 public class Tree {
 
     public Iterator<Node> buildTreeAndGetRoots(List<MyObject> actualObjects) {
-        Map<String, Node> lookup = new HashMap<>();
+        Map<Integer, Node> lookup = new HashMap<>();
 
         for (MyObject object : actualObjects) {
-            lookup.put(object.id, new Node(object));
+            lookup.put(object.tid, new Node(object));
         }
         //foreach (var item in lookup.Values)
         Collection<Node> nodes = lookup.values();

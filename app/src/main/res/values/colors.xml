@@ -6,6 +6,7 @@
   -->
 
 <resources>
+    <color name="text_gray">#323232</color>
     <color name="app_primary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>

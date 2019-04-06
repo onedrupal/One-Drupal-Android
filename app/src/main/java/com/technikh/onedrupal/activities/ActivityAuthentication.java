@@ -271,8 +271,7 @@ public class ActivityAuthentication extends ActivityBase {
 
                         Bundle fbundle = new Bundle();
                         fbundle.putString(FirebaseAnalytics.Param.ITEM_NAME, mAuthPreferences.getPrimarySiteUrl());
-                        fbundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "addAccountAuth");
-                        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, fbundle);
+                        mFirebaseAnalytics.logEvent("ACCOUNT_ADD_AUTH", fbundle);
                     }else{
                         AccountManager am = AccountManager.get(context);
                         String site_domain = am.getUserData(account, SiteLoginActivity.PARAM_USER_SITE_URL);
@@ -314,9 +313,7 @@ public class ActivityAuthentication extends ActivityBase {
     public void onClickBtnViewFeaturedSite(View v)
     {
         Bundle bundle = new Bundle();
-        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "FeaturedSite");
-        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "button");
-        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+        mFirebaseAnalytics.logEvent("CLICK_BTN_FEATURED_SITE1", bundle);
 
         Intent intent = new Intent(context, FeaturedSitesActivity.class);
         startActivity(intent);
@@ -325,9 +322,7 @@ public class ActivityAuthentication extends ActivityBase {
     public void onClickBtnLoginDemo(View v)
     {
         Bundle bundle = new Bundle();
-        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "LoginDemo");
-        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "button");
-        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+        mFirebaseAnalytics.logEvent("CLICK_BTN_DEMO_LOGIN1", bundle);
 
         Bundle b = new Bundle();
         b.putBoolean("demoMode", true);
@@ -340,9 +335,7 @@ public class ActivityAuthentication extends ActivityBase {
     public void onClickBtnLoginCustomSite(View v)
     {
         Bundle bundle = new Bundle();
-        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "LoginCustom");
-        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "button");
-        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+        mFirebaseAnalytics.logEvent("CLICK_BTN_CUSTOM_LOGIN", bundle);
 
         //Toast.makeText(this, "Clicked on Button", Toast.LENGTH_LONG).show();
         Bundle b = new Bundle();

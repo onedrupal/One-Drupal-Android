@@ -26,6 +26,9 @@ public class nodeFields {
     @SerializedName("embedded_video")
     public String remote_video="";
 
+    @SerializedName("taxonomies")
+    public ArrayList<settingTaxonomyField> taxonomies;
+
     public String getFieldImage() {
         return mImage;
     }

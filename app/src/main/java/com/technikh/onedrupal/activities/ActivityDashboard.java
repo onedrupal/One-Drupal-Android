@@ -387,8 +387,8 @@ public class ActivityDashboard extends ActivityBase {
                         JSONObject jsonObject = dataArray.getJSONObject(i);
                         MyObject child = new MyObject();
                         child.name = jsonObject.getJSONObject("attributes").getString("name");
-                        child.id = jsonObject.getString("id");
-                        child.parentId = jsonObject.getJSONObject("relationships").getJSONObject("parent").getJSONArray("data").getJSONObject(0).getString("id");
+                        //child.id = jsonObject.getString("id");
+                        //child.parentId = jsonObject.getJSONObject("relationships").getJSONObject("parent").getJSONArray("data").getJSONObject(0).getString("id");
                         categories.add(child);
                     }
                     constructTree();
