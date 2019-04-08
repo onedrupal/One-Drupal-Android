@@ -12,6 +12,7 @@
     android:orientation="horizontal">
 <View
     android:id="@+id/leadingView"
+    android:visibility="gone"
     android:layout_width="10dp"
     android:layout_height="wrap_content"/>
 

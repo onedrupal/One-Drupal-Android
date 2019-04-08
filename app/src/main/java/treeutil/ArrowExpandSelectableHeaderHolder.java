@@ -7,6 +7,7 @@ package treeutil;
  */
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
@@ -25,6 +26,7 @@ public class ArrowExpandSelectableHeaderHolder extends TreeNode.BaseNodeViewHold
     private TextView tvValue;
     private PrintView arrowView;
     private CheckBox nodeSelector;
+    private String TAG = "ArrowExpandSelectableHeaderHolder";
     int level;
 
     public ArrowExpandSelectableHeaderHolder(Context context, int level) {
@@ -37,12 +39,13 @@ public class ArrowExpandSelectableHeaderHolder extends TreeNode.BaseNodeViewHold
         final LayoutInflater inflater = LayoutInflater.from(context);
         final View view = inflater.inflate(R.layout.layout_node, null, false);
 
-        if (level != 0) {
+      /*  if (level != 0) {
             View leadingView = view.findViewById(R.id.leadingView);
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(dpToPx(25*level),dpToPx(25));
 
             leadingView.setLayoutParams(layoutParams);
-        }
+        }*/
+        Log.d("padding", value.name+ " createNodeView: level "+level+" px "+dpToPx(25*level));
         tvValue = (TextView) view.findViewById(R.id.node_value);
         tvValue.setText(value.name);
 
@@ -52,7 +55,13 @@ public class ArrowExpandSelectableHeaderHolder extends TreeNode.BaseNodeViewHold
         arrowView = (PrintView) view.findViewById(R.id.arrow_icon);
         arrowView.setPadding(20,10,10,10);
         if (node.isLeaf()) {
-            arrowView.setVisibility(View.GONE);
+            arrowView.setVisibility(View.INVISIBLE);
+        }
+        if(node.isRoot()){
+            Log.d(TAG, "createNodeView: root value.name "+value.name);
+        }
+        if(node.isFirstChild()){
+            Log.d(TAG, "createNodeView: isFirstChild value.name "+value.name);
         }
         arrowView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,7 +93,7 @@ public class ArrowExpandSelectableHeaderHolder extends TreeNode.BaseNodeViewHold
 
     @Override
     public void toggleSelectionMode(boolean editModeEnabled) {
-        nodeSelector.setVisibility(editModeEnabled ? View.VISIBLE : View.GONE);
+        nodeSelector.setVisibility(editModeEnabled ? View.VISIBLE : View.INVISIBLE);
         nodeSelector.setChecked(mNode.isSelected());
     }
 

@@ -26,8 +26,8 @@
 
     <style name="TreeNodeStyleCustom">
         <item name="android:paddingLeft">20dp</item>
-        <!--<item name="android:showDividers">middle</item>-->
-        <!--<item name="android:divider">@android:drawable/divider_horizontal_bright</item>-->
+        <item name="android:showDividers">middle</item>
+        <item name="android:divider">@android:drawable/divider_horizontal_bright</item>
     </style>
 
     <style name="ToolBarStyle" parent="ThemeOverlay.AppCompat.Dark">

@@ -47,7 +47,9 @@ import com.technikh.onedrupal.BuildConfig;
 import com.technikh.onedrupal.R;
 import com.technikh.onedrupal.activities.ActivityFanPostDetails;
 import com.technikh.onedrupal.activities.SiteContentTabsActivity;
+import com.technikh.onedrupal.activities.ViewImageActivity;
 import com.technikh.onedrupal.adapter.AdapterFanPosts;
+import com.technikh.onedrupal.adapter.GalleryAdapter;
 import com.technikh.onedrupal.app.MyApplication;
 import com.technikh.onedrupal.authenticator.AuthPreferences;
 import com.technikh.onedrupal.helpers.PDRestClient;
@@ -107,7 +109,9 @@ public class FragmentADRedsox extends FragmentBase implements View.OnClickListen
     EditText et_search_keys;
     SwipeRefreshLayout swipeContainer;
     ArrayList<ModelFanPosts> modelFanPostsArrayList = new ArrayList<>();
-    AdapterFanPosts adapter;
+    AdapterFanPosts adapterDefault;
+    GalleryAdapter adapterGallery;
+    Boolean galleryMode = false;
     LinearLayout no_connection_ll;
     TextView no_connection_text;
     private String TAG = "FragmentADRedsox";
@@ -272,22 +276,36 @@ public class FragmentADRedsox extends FragmentBase implements View.OnClickListen
         manager = new LinearLayoutManager(context);
         rv_f_redsox_recycler.setLayoutManager(manager);
         rv_f_redsox_recycler.setItemAnimator(new DefaultItemAnimator());
-        adapter = new AdapterFanPosts(context, modelFanPostsArrayList, new AdapterFanPosts.RecyclerViewClickListener() {
-            @Override
-            public void onItemClickListener(View v, int position) {
-                Log.d(TAG, "onItemClickListener: v.getId() " + v.getId());
-                Log.d(TAG, "onItemClickListener: tv_row_view_post " + R.id.tv_row_view_post);
-                if (v.getId() == R.id.tv_row_view_post) {
-                    ModelFanPosts singleModelFanPosts = adapter.getAllModelPost().get(position);
-                    startActivity(new Intent(context, ActivityFanPostDetails.class)
-                            .putExtra("nid", singleModelFanPosts.getNid())
-                            .putExtra("SiteProtocol", mSiteProtocol)
-                            .putExtra("SiteDomain", mSiteDomain)
-                    );
+        if(!galleryMode) {
+            adapterDefault = new AdapterFanPosts(context, modelFanPostsArrayList, new AdapterFanPosts.RecyclerViewClickListener() {
+                @Override
+                public void onItemClickListener(View v, int position) {
+                    Log.d(TAG, "onItemClickListener: v.getId() " + v.getId());
+                    Log.d(TAG, "onItemClickListener: tv_row_view_post " + R.id.tv_row_view_post);
+                    if (v.getId() == R.id.tv_row_view_post) {
+                        ModelFanPosts singleModelFanPosts = adapterDefault.getAllModelPost().get(position);
+                        startActivity(new Intent(context, ActivityFanPostDetails.class)
+                                .putExtra("nid", singleModelFanPosts.getNid())
+                                .putExtra("SiteProtocol", mSiteProtocol)
+                                .putExtra("SiteDomain", mSiteDomain)
+                        );
+                    }
                 }
-            }
-        });
-        rv_f_redsox_recycler.setAdapter(adapter);
+            });
+            rv_f_redsox_recycler.setAdapter(adapterDefault);
+        }else{
+            adapterGallery = new GalleryAdapter(context, modelFanPostsArrayList, new GalleryAdapter.RecyclerViewClickListener() {
+                @Override
+                public void onItemClickListener(View v, int position) {
+                    Intent intent = new Intent(getActivity(), ViewImageActivity.class);
+                    intent.putExtra("posts", modelFanPostsArrayList);
+                    intent.putExtra("position", position);
+                    startActivity(intent);
+                }
+            });
+            rv_f_redsox_recycler.setAdapter(adapterGallery);
+        }
+
 
 
         final EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(manager) {
@@ -338,8 +356,8 @@ public class FragmentADRedsox extends FragmentBase implements View.OnClickListen
                 TreeNode parentNode = new TreeNode(node.associatedObject).setViewHolder(new ArrowExpandSelectableHeaderHolder(context, 0));
                 root1 = root1.addChild(parentNode);
 
-                //addSubCHildren(parentNode, node.children, 0);
-                addTopicChildren(parentNode, node.children);
+                addSubCHildren(parentNode, node.children, 0);
+                //addTopicChildren(parentNode, node.children);
             }
         }
         final TreeNode root2 = root1;
@@ -713,7 +731,11 @@ public class FragmentADRedsox extends FragmentBase implements View.OnClickListen
                                     //  modelFanPostsArrayList.clear();
 
                                     if (swipeRefresh) {
-                                        adapter.clearAll();
+                                        if(galleryMode){
+                                            adapterGallery.clearAll();
+                                        }else {
+                                            adapterDefault.clearAll();
+                                        }
                                     }
                                     JSONArray ja = result.getJSONArray("results");
                                     for (int j = 0; j < ja.length(); j++) {
@@ -721,11 +743,18 @@ public class FragmentADRedsox extends FragmentBase implements View.OnClickListen
                                         ModelFanPosts modelFanPosts = new ModelFanPosts(jo);
                                         // modelFanPostsArrayList.add(modelFanPosts);
                                         if (modelFanPosts.isValidNodeType()) {
-                                            adapter.addOneRequestData(modelFanPosts);
+                                            if(galleryMode){
+                                                adapterGallery.addOneRequestData(modelFanPosts);
+                                            }else {
+                                                adapterDefault.addOneRequestData(modelFanPosts);
+                                            }
                                         }
                                     }
-                                    adapter.notifyDataSetChanged();
-
+                                    if(galleryMode){
+                                        adapterGallery.notifyDataSetChanged();
+                                    }else {
+                                        adapterDefault.notifyDataSetChanged();
+                                    }
 
                                 }
                             } catch (Exception e) {
@@ -746,12 +775,12 @@ public class FragmentADRedsox extends FragmentBase implements View.OnClickListen
 //                            position = first.getTop() - first.getPaddingTop();
 //                    }
                         } else {
-                            if (adapter.getAllModelPost().size() <= 0) {
+                           /* if (adapter.getAllModelPost().size() <= 0) {
                                 no_connection_ll.setVisibility(View.VISIBLE);
                                 no_connection_text.setText(response_error);
                             } else {
                                 PDUtils.showToast(context, response_error);
-                            }
+                            }*/
                         }
                         loading = false;
                     }

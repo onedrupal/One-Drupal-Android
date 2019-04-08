@@ -57,6 +57,8 @@ import okhttp3.logging.HttpLoggingInterceptor;
 
 public class FragmentADGallery extends FragmentBase {
 
+    private String mSiteDomain, mSiteProtocol;
+
     StaggeredGridLayoutManager manager;
     RecyclerView rv_f_redsox_recycler;
     SwipeRefreshLayout swipeContainer;
@@ -99,9 +101,11 @@ public class FragmentADGallery extends FragmentBase {
     private int visibleThreshold = 2;
     private boolean loading = false;
 
-    public static FragmentADGallery newInstance(int i) {
+    public static FragmentADGallery newInstance(int i, String protocol, String domain) {
         Bundle args = new Bundle();
         args.putInt("tab", i);
+        args.putString("SiteProtocol", protocol);
+        args.putString("SiteDomain", domain);
         FragmentADGallery fragment = new FragmentADGallery();
         fragment.setArguments(args);
         return fragment;
@@ -119,6 +123,8 @@ public class FragmentADGallery extends FragmentBase {
         super.onViewCreated(view, savedInstanceState);
         if (getArguments() != null) {
             tab = getArguments().getInt("tab");
+            mSiteProtocol = getArguments().getString("SiteProtocol");
+            mSiteDomain = getArguments().getString("SiteDomain");
         }
         no_connection_ll = view.findViewById(R.id.no_connection_ll);
         no_connection_text = view.findViewById(R.id.no_connection_text);
