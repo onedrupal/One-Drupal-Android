@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2019. Nikhil Dubbaka from TechNikh.com under GNU AFFERO GENERAL PUBLIC LICENSE
+  ~ Copyright and license notices must be preserved.
+  ~ When a modified version is used to provide a service over a network, the complete source code of the modified version must be made available.
+  -->
+
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cl_row_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:maxHeight="400dp"
+    android:padding="@dimen/dimen_8dp">
+
+    <ImageView
+        android:id="@+id/iv_row_fan_post_user_image"
+        android:layout_width="@dimen/dimen_50dp"
+        android:layout_height="@dimen/dimen_50dp"
+        android:background="@color/blue_500"
+        android:contentDescription="@string/content_description"
+        android:src="@drawable/ic_taxonomy_icon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_row_fan_post_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/dimen_8dp"
+        android:layout_marginStart="@dimen/dimen_8dp"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/color_primary_text"
+        app:fontFamily="@font/sf_medium"
+        app:layout_constraintStart_toEndOf="@id/iv_row_fan_post_user_image"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Name" />
+
+
+
+</android.support.constraint.ConstraintLayout>

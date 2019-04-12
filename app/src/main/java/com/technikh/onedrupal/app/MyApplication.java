@@ -11,6 +11,7 @@ import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
+import com.technikh.onedrupal.models.OneGlobalSettingsSectionModel;
 import com.technikh.onedrupal.models.SettingsType;
 import com.technikh.onedrupal.models.SettingsType;
 
@@ -22,6 +23,7 @@ public class MyApplication extends MultiDexApplication {
     private static Context context;
     private static String TAG = "MyApplication";
     public static List<SettingsType> gblNodeTypeSettings = new ArrayList<SettingsType>();
+    public static OneGlobalSettingsSectionModel gblSettingsSection;
     //public static List<SettingsType> gblSettingsTypeList = new ArrayList<SettingsType>();
 
     @Override

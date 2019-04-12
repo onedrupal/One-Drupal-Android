@@ -53,7 +53,7 @@ public class FeaturedSitesActivity extends AppCompatActivity {
 
         ArrayList<Site> empDataList = new ArrayList<Site>();
         empDataList.add(new Site("https://", "nikhil.dubbaka.com"));
-        empDataList.add(new Site("http://", "app.eschool2go.org"));
+        //empDataList.add(new Site("http://", "app.eschool2go.org"));
         generateEmployeeList(empDataList);
 /*
         //Create handle for the RetrofitOneDrupalInstance interface

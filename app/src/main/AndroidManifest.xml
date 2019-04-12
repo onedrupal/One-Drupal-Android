@@ -1,10 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2019. Nikhil Dubbaka from TechNikh.com under GNU AFFERO GENERAL PUBLIC LICENSE
   ~ Copyright and license notices must be preserved.
   ~ When a modified version is used to provide a service over a network, the complete source code of the modified version must be made available.
-  -->
-
+-->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.technikh.onedrupal">
 
@@ -97,12 +95,15 @@
             android:label="@string/title_activity_site_login" />
         <activity
             android:name=".activities.SharedDataReceiverActivity"
-            android:label="@string/title_activity_SharedDataReceiver">
-        </activity>
+            android:label="@string/title_activity_SharedDataReceiver"></activity>
         <activity android:name=".activities.FeaturedSitesActivity" />
         <activity
             android:name=".activities.SiteContentTabsActivity"
             android:label="@string/title_activity_site_content_tabs"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".activities.TaxonomyBrowserActivity"
+            android:label="@string/title_activity_taxonomy_browser"
             android:theme="@style/AppTheme"></activity>
     </application>
 

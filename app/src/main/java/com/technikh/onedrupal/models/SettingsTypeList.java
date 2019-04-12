@@ -14,8 +14,15 @@ public class SettingsTypeList {
     @SerializedName("types")
     private ArrayList<SettingsType> typesList;
 
+    @SerializedName("settings")
+    private OneGlobalSettingsSectionModel settings;
+
     public ArrayList<SettingsType> getTypesArrayList() {
         return typesList;
+    }
+
+    public OneGlobalSettingsSectionModel getSettingsSection() {
+        return settings;
     }
 
     public void setTypesArrayList(ArrayList<SettingsType> siteArrayList) {

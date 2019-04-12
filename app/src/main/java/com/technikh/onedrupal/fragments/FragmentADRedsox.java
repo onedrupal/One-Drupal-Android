@@ -652,7 +652,8 @@ public class FragmentADRedsox extends FragmentBase implements View.OnClickListen
             }
         }
         if(!tidFiltersAND.isEmpty()){
-            urlSlug = urlSlug+"/"+TextUtils.join("/", tidFiltersAND);
+            // First taxonomy term ID contextual filter is for exact match, depth 0. so send first filter as all
+            urlSlug = urlSlug+"/all/"+TextUtils.join("/", tidFiltersAND);
         }
 
         String newUrl = site_protocol+site_domain + "/onedrupal/api/v1/" + urlSlug + "?page=" + pageNumber;

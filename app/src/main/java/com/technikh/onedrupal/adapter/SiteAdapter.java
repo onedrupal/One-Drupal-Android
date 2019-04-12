@@ -37,6 +37,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.technikh.onedrupal.app.MyApplication.gblSettingsSection;
+
 public class SiteAdapter extends RecyclerView.Adapter<SiteAdapter.EmployeeViewHolder> {
 
     private ArrayList<Site> dataList;
@@ -89,6 +91,7 @@ public class SiteAdapter extends RecyclerView.Adapter<SiteAdapter.EmployeeViewHo
                             for (int j = 0; j < nodeTypesList.size(); j++) {
                                 MyApplication.gblNodeTypeSettings.add(nodeTypesList.get(j));
                             }
+                            gblSettingsSection = response.body().getSettingsSection();
 
                             Bundle b = new Bundle();
                             b.putBoolean("publicViewMode", true);

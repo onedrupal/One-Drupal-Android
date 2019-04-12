@@ -13,6 +13,9 @@
         <item
             android:id="@+id/featuredSites"
             android:title="Featured Sites" />
+        <item
+            android:id="@+id/taxonomyExplorer"
+            android:title="Taxonomy Explorer (SiteMap)" />
     <!--    <item
             android:id="@+id/closeSession"
             android:title="Close Session" /> -->

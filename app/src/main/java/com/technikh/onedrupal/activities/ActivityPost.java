@@ -37,6 +37,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -91,6 +92,7 @@ public class ActivityPost extends ActivityBase implements View.OnClickListener {
     private String postImagePath = "", xCSRFToken = "";
     private ImageUploadResponse imageUploadResponse;
     private static String TAG = "ActivityPost";
+    private FirebaseAnalytics mFirebaseAnalytics;
 
 
     //private static final String BOLD = "<b>Write blog details here</b>";
@@ -120,6 +122,8 @@ public class ActivityPost extends ActivityBase implements View.OnClickListener {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
+
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         init();
 
@@ -647,6 +651,9 @@ options: [ ]
                 }
                 Response response = client1.newCall(request).execute();
                 if (response.isSuccessful()) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, mAuthPreferences.getPrimarySiteUrl());
+                    mFirebaseAnalytics.logEvent("POST_NODE_SUCCESS", bundle);
                     JSONObject responseBodyObj = new JSONObject(response.body().string());
                     /*
                     "status": [
@@ -724,6 +731,9 @@ options: [ ]
                 }else{
                     Log.d("123", "makeBlogPost: not successful"+response.toString()+response.body().string());
                     response.body().close();
+                    Bundle bundle = new Bundle();
+                    bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, mAuthPreferences.getPrimarySiteUrl());
+                    mFirebaseAnalytics.logEvent("POST_NODE_FAIL", bundle);
                     _progressDialogAsync.cancel();
                     String message_prefix = getString(R.string.dialog_api_failed_message_prefix);
                     if((response.code() == 404)||(response.code() == 406)){

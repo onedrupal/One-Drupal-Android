@@ -103,5 +103,6 @@
 
     <string name="ic_keyboard_arrow_right">&#xe0c7;</string>
     <string name="ic_keyboard_arrow_down">&#xe0c5;</string>
+    <string name="title_activity_taxonomy_browser">Browser</string>
 
 </resources>

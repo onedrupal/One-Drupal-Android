@@ -92,6 +92,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
 
 import static com.technikh.onedrupal.activities.SiteLoginActivity.PARAM_USER_SITE_PROTOCOL;
 import static com.technikh.onedrupal.activities.SiteLoginActivity.PARAM_USER_SITE_URL;
+import static com.technikh.onedrupal.app.MyApplication.gblSettingsSection;
 import static com.technikh.onedrupal.models.ConstantData.EMAIL;
 import static com.technikh.onedrupal.models.ConstantData.FULL_NAME;
 import static com.technikh.onedrupal.models.ConstantData.PROFILE_PICTURE;
@@ -182,6 +183,7 @@ public class ActivityAuthentication extends ActivityBase {
                         for (int j = 0; j < nodeTypesList.size(); j++) {
                             MyApplication.gblNodeTypeSettings.add(nodeTypesList.get(j));
                         }
+                        gblSettingsSection = response.body().getSettingsSection();
 
                         Bundle b = new Bundle();
                         b.putBoolean("publicViewMode", false);

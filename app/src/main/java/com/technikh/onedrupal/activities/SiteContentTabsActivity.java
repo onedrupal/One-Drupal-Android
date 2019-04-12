@@ -147,6 +147,12 @@ public class SiteContentTabsActivity extends AppCompatActivity {
                     Intent intent1 = new Intent(SiteContentTabsActivity.this, FeaturedSitesActivity.class);
                     startActivity(intent1);
                     break;
+                case R.id.taxonomyExplorer:
+                    Intent intent2 = new Intent(SiteContentTabsActivity.this, TaxonomyBrowserActivity.class);
+                    intent2.putExtra("SiteProtocol", mSiteProtocol);
+                    intent2.putExtra("SiteDomain", mSiteDomain);
+                    startActivity(intent2);
+                    break;
                /* case R.id.closeSession:
                     // Clear session and ask for new auth token
                     if(authToken != null) {

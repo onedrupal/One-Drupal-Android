@@ -75,6 +75,7 @@ import okhttp3.Response;
 import java.io.IOException;
 
 import static android.Manifest.permission.READ_CONTACTS;
+import static com.technikh.onedrupal.app.MyApplication.gblSettingsSection;
 
 /**
  * A login screen that offers login via email/password.
@@ -402,6 +403,7 @@ public class SiteLoginActivity extends AccountAuthenticatorActivity {
                         for (int j = 0; j < nodeTypesList.size(); j++) {
                             MyApplication.gblNodeTypeSettings.add(nodeTypesList.get(j));
                         }
+                        gblSettingsSection = response.body().getSettingsSection();
                         if(nodeTypesList.size() == 0){
                             new AlertDialog.Builder(SiteLoginActivity.this)
                                     .setTitle(getString(R.string.dialog_settings_api_failed_title))
