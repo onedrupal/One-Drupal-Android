@@ -453,7 +453,12 @@ public class SiteContentTabsActivity extends AppCompatActivity {
             // Return a PlaceholderFragment (defined as a static inner class below).
             //return PlaceholderFragment.newInstance(position + 1);
             Log.d(TAG, "SectionsPagerAdapter getItem: "+mSiteDomain);
-            return FragmentADRedsox.newInstance(position, mSiteProtocol, mSiteDomain);
+            SettingsType nTypeObj = MyApplication.gblGetNodeTypeFromPosition(position-2);
+            if(nTypeObj.getNodeType().equals("movies") || nTypeObj.getNodeType().equals("tb_page")){
+                return FragmentADRedsox.newInstance(position, mSiteProtocol, mSiteDomain);
+            }else {
+                return FragmentADRedsox.newInstance(position, mSiteProtocol, mSiteDomain);
+            }
         }
 
         @Override

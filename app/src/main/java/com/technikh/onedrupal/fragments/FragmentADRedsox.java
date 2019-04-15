@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -32,17 +33,21 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.otaliastudios.autocomplete.Autocomplete;
 import com.otaliastudios.autocomplete.AutocompleteCallback;
 import com.otaliastudios.autocomplete.AutocompletePolicy;
 import com.otaliastudios.autocomplete.AutocompletePresenter;
+import com.stfalcon.imageviewer.StfalconImageViewer;
+import com.stfalcon.imageviewer.loader.ImageLoader;
 import com.technikh.onedrupal.BuildConfig;
 import com.technikh.onedrupal.R;
 import com.technikh.onedrupal.activities.ActivityFanPostDetails;
@@ -294,16 +299,7 @@ public class FragmentADRedsox extends FragmentBase implements View.OnClickListen
             });
             rv_f_redsox_recycler.setAdapter(adapterDefault);
         }else{
-            adapterGallery = new GalleryAdapter(context, modelFanPostsArrayList, new GalleryAdapter.RecyclerViewClickListener() {
-                @Override
-                public void onItemClickListener(View v, int position) {
-                    Intent intent = new Intent(getActivity(), ViewImageActivity.class);
-                    intent.putExtra("posts", modelFanPostsArrayList);
-                    intent.putExtra("position", position);
-                    startActivity(intent);
-                }
-            });
-            rv_f_redsox_recycler.setAdapter(adapterGallery);
+
         }
 
 
@@ -337,6 +333,32 @@ public class FragmentADRedsox extends FragmentBase implements View.OnClickListen
         if(tab >= 2) {
             requestTaxonomyApiFilters();
         }
+    }
+
+    private void setupGalleryRecyclerView(){
+        rv_f_redsox_recycler.setVisibility(View.GONE);
+        List<String> RESOURCES = new ArrayList<>();
+        RESOURCES.add("https://raw.githubusercontent.com/stfalcon-studio/StfalconImageViewer/master/images/posters/Vincent.jpg");
+        RESOURCES.add("https://github.com/stfalcon-studio/StfalconImageViewer/blob/master/images/posters/Driver.jpg?raw=true");
+        new StfalconImageViewer.Builder<String>(getContext(), RESOURCES, new ImageLoader<String>() {
+            @Override
+            public void loadImage(ImageView imageView, String image) {
+                Log.d(TAG, "loadImage: "+image);
+                Glide.with(getContext())
+                        .load(image)
+                        .into(imageView);
+            }
+        }).show();
+        adapterGallery = new GalleryAdapter(context, modelFanPostsArrayList, new GalleryAdapter.RecyclerViewClickListener() {
+            @Override
+            public void onItemClickListener(View v, int position) {
+                Intent intent = new Intent(getActivity(), ViewImageActivity.class);
+                intent.putExtra("posts", modelFanPostsArrayList);
+                intent.putExtra("position", position);
+                startActivity(intent);
+            }
+        });
+        rv_f_redsox_recycler.setAdapter(adapterGallery);
     }
 
     private void constructTree(ArrayList<MyObject> categories1, final String vocabularyName) {
@@ -616,6 +638,10 @@ public class FragmentADRedsox extends FragmentBase implements View.OnClickListen
             }else{
                 urlSlug = "content";
             }
+            if(nTypeObj.getNodeType().equals("movies") || nTypeObj.getNodeType().equals("tb_page")){
+                galleryMode = true;
+                setupGalleryRecyclerView();
+            }
         }
 
         response_error = "";
@@ -745,14 +771,16 @@ public class FragmentADRedsox extends FragmentBase implements View.OnClickListen
                                         // modelFanPostsArrayList.add(modelFanPosts);
                                         if (modelFanPosts.isValidNodeType()) {
                                             if(galleryMode){
-                                                adapterGallery.addOneRequestData(modelFanPosts);
+                                                Log.d(TAG, "run: galleryMode addOneRequestData "+j);
+                                              //  adapterGallery.addOneRequestData(modelFanPosts);
                                             }else {
                                                 adapterDefault.addOneRequestData(modelFanPosts);
                                             }
                                         }
                                     }
                                     if(galleryMode){
-                                        adapterGallery.notifyDataSetChanged();
+                                        //adapterGallery.notifyDataSetChanged();
+                                       // viewerView.updateImages(images);
                                     }else {
                                         adapterDefault.notifyDataSetChanged();
                                     }
