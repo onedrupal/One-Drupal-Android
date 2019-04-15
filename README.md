@@ -25,6 +25,16 @@ To manage your Drupal site through this app, You need to install https://www.dru
  * Copyright and license notices must be preserved.
  * When a modified version is used to provide a service over a network, the complete source code of the modified version must be made available.
 
+## Building
+create a file in the root directory with below data
+
+`google_auth_client_id="0000000.apps.googleusercontent.com"`
+
+`demo_site_url="one-drupal-demo.technikh.com"`
+
+`demo_site_username="000"`
+
+`demo_site_password="000"`
 
 <img src="https://raw.githubusercontent.com/onedrupal/One-Drupal-Android/master/screenshots/blog_screen1_google_signin.png" width="300px"/>
 <img src="https://raw.githubusercontent.com/onedrupal/One-Drupal-Android/master/screenshots/blog_screen2_signout_auto_disappear.png" width="300px"/>
