@@ -12,6 +12,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
@@ -29,10 +32,12 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.technikh.onedrupal.BuildConfig;
 import com.technikh.onedrupal.R;
+import com.technikh.onedrupal.adapter.BreadcumAdapter;
 import com.technikh.onedrupal.app.MyApplication;
 import com.technikh.onedrupal.authenticator.AuthPreferences;
 import com.technikh.onedrupal.helpers.PDRestClient;
 import com.technikh.onedrupal.helpers.PDUtils;
+import com.technikh.onedrupal.models.BreadcumModel;
 import com.technikh.onedrupal.models.ModelFanPosts;
 import com.technikh.onedrupal.models.ModelNodeType;
 import com.technikh.onedrupal.models.SettingsType;
@@ -59,7 +64,9 @@ import okhttp3.Request;
 import okhttp3.Response;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class ActivityFanPostDetails extends ActivityBase {
+import static com.technikh.onedrupal.app.MyApplication.breadcumList;
+
+public class ActivityFanPostDetails extends ActivityBase implements BreadcumAdapter.buttonEventListenr {
 
     private static String TAG = "ActivityFanPostDetails";
     Toolbar toolbar;
@@ -75,9 +82,10 @@ public class ActivityFanPostDetails extends ActivityBase {
     private String nImageURL = "";
     private String nID = "";
     private String nodeType = "";
-
-
     private AuthPreferences mAuthPreferences;
+
+    private RecyclerView breadcum_rv;
+    private BreadcumAdapter breadcumAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -87,19 +95,27 @@ public class ActivityFanPostDetails extends ActivityBase {
         mAuthPreferences = new AuthPreferences(this);
 
         nid = getIntent().getStringExtra("nid");
+
         init();
+
     }
 
     private void init() {
+
         toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle("Post Detail");
+        setSupportActionBar(toolbar);
+
+
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
+
+
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 finish();
             }
         });
+
         iv_a_fan_post_details_user_image = findViewById(R.id.iv_a_fan_post_details_user_image);
         iv_a_fan_post_details_image = findViewById(R.id.iv_a_fan_post_details_image);
         tv_a_fan_post_details_title = findViewById(R.id.tv_a_fan_post_details_title);
@@ -115,6 +131,50 @@ public class ActivityFanPostDetails extends ActivityBase {
         String site_domain = getIntent().getStringExtra("SiteDomain");
         String site_protocol = getIntent().getStringExtra("SiteProtocol");
         requestNewsList(nid, site_protocol, site_domain);
+
+        initBreadcum();
+    }
+
+    public void initBreadcum(){
+
+
+        breadcum_rv = (RecyclerView) toolbar.findViewById(R.id.breadcum_rv);
+
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext(),LinearLayoutManager.HORIZONTAL, false);
+
+        breadcum_rv.setLayoutManager(mLayoutManager);
+
+        Intent intent = getIntent();
+
+        if (intent != null) {
+
+            String sitetitle = intent.getStringExtra("sitetitle");
+
+            String tid = intent.getStringExtra("tid");
+
+            String vid = intent.getStringExtra("vid");
+
+            System.out.println(sitetitle + "breadcumtitle");
+
+            if (sitetitle == null ){
+
+                breadcum_rv.setVisibility(View.GONE);
+
+            } else {
+
+                BreadcumModel getSet = new BreadcumModel(sitetitle, vid, tid);
+
+                breadcumList.add(getSet);
+
+                breadcumAdapter = new BreadcumAdapter(breadcumList, this);
+
+                breadcum_rv.setAdapter(breadcumAdapter);
+
+                breadcumAdapter.notifyDataSetChanged();
+
+            }
+
+        }
     }
 
     private void drupalNodeEditProperty(String nid, boolean status, String field) {
@@ -253,6 +313,7 @@ public class ActivityFanPostDetails extends ActivityBase {
     }
 
     private void requestNewsList(String nodeId, String site_protocol, String site_domain) {
+
         if (site_domain == null || site_domain.isEmpty()) {
             Log.d(TAG, "requestNewsList: site_domain empty");
             site_domain = mAuthPreferences.getPrimarySiteUrl();
@@ -462,5 +523,21 @@ public class ActivityFanPostDetails extends ActivityBase {
                 });
             }
         });
+    }
+
+
+    @Override
+    public void buttonEvent(int position,String SiteTitle,String titleid,String vocabularyid) {
+
+        breadcumList.subList(position, breadcumList.size()).clear();
+
+        Intent myIntent = new Intent(this, TaxonomyBrowserActivity.class);
+        myIntent.putExtra("SiteProtocol", "http://");
+        myIntent.putExtra("SiteDomain", "one-drupal-demo.technikh.com/");
+        myIntent.putExtra("tid", titleid);
+        myIntent.putExtra("vid", vocabularyid);
+
+        startActivity(myIntent);
+
     }
 }

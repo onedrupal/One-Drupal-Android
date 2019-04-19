@@ -8,6 +8,7 @@ package com.technikh.onedrupal.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -21,7 +22,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.loopj.android.http.RequestParams;
 import com.technikh.onedrupal.R;
 import com.technikh.onedrupal.activities.ActivityFanPostDetails;
@@ -40,11 +40,9 @@ import com.technikh.onedrupal.network.AddCookiesInterceptor;
 import com.technikh.onedrupal.network.ProvideCacheInterceptor;
 import com.technikh.onedrupal.network.ProvideOfflineCacheInterceptor;
 import com.technikh.onedrupal.util.EndlessRecyclerViewScrollListener;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -52,7 +50,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import okhttp3.Cache;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -61,12 +58,13 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import treeutil.MyObject;
-
+import static android.content.Context.MODE_PRIVATE;
 import static com.technikh.onedrupal.app.MyApplication.gblSettingsSection;
 
 /**
  * A placeholder fragment containing a simple view.
  */
+
 public class TaxonomyBrowserActivityFragment extends Fragment {
 
     private String TAG = "TaxonomyBrowserActivityFragment";
@@ -77,10 +75,10 @@ public class TaxonomyBrowserActivityFragment extends Fragment {
     TeaserAdapter adapterDefault;
     Context mContext;
     LinearLayoutManager manager;
-
-    private String mSiteDomain, mSiteProtocol, mTid, mVocabularyId;
+    private String mSiteDomain, mSiteProtocol, mTid, mVocabularyId ,location,sitetitle;
 
     public TaxonomyBrowserActivityFragment() {
+
     }
 
     @Override
@@ -103,12 +101,16 @@ public class TaxonomyBrowserActivityFragment extends Fragment {
             mSiteDomain = bundle.getString("SiteDomain");
             mTid = bundle.getString("tid");
             mVocabularyId = bundle.getString("vid");
+
+            Log.d(TAG, "onBreadcum: mTid "+mTid+" mVocabularyId "+mVocabularyId + mSiteProtocol);
             if(mTid == null || mTid.isEmpty()){
                 mTid = "0";
+
             }
             if(mVocabularyId == null || mVocabularyId.isEmpty()){
                 mVocabularyId = "all";
             }
+
         }
         Log.d(TAG, "onViewCreated: mTid "+mTid+" mVocabularyId "+mVocabularyId);
         // First screen mTid 0 mVocabularyId all
@@ -145,38 +147,46 @@ public class TaxonomyBrowserActivityFragment extends Fragment {
 
     /*Method to generate List of employees using RecyclerView with custom adapter*/
     private void setupNodeRecyclerView() {
+
         rv_f_explorer_items.addItemDecoration(new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL));
 
         rv_f_explorer_items.setHasFixedSize(true);
         manager = new LinearLayoutManager(mContext);
         rv_f_explorer_items.setLayoutManager(manager);
         rv_f_explorer_items.setItemAnimator(new DefaultItemAnimator());
+
         adapterDefault = new TeaserAdapter(mContext, dataList, new TeaserAdapter.RecyclerViewClickListener() {
             @Override
             public void onItemClickListener(View v, int position) {
-                //Log.d(TAG, "onItemClickListener: v.getId() " + v.getId());
-                //Log.d(TAG, "onItemClickListener: tv_row_view_post " + R.id.tv_row_view_post);
-                //if (v.getId() == R.id.tv_row_view_post) {
-                    //ModelFanPosts singleModelFanPosts = adapterDefault.getAllModelPost().get(position);
+
                     TeaserModel teaserModel = adapterDefault.getAllModelPost().get(position);
+
                     if(teaserModel.getEntityType().equals("taxonomy")){
-                        startActivity(new Intent(mContext, TaxonomyBrowserActivity.class)
+
+                        mContext.startActivity(new Intent(mContext, TaxonomyBrowserActivity.class)
                                 .putExtra("tid", teaserModel.getId())
                                 .putExtra("vid", teaserModel.vid)
                                 .putExtra("SiteProtocol", mSiteProtocol)
                                 .putExtra("SiteDomain", mSiteDomain)
+                                .putExtra("sitetitle",teaserModel.getTitle())
                         );
-                    }else {
-                        startActivity(new Intent(mContext, ActivityFanPostDetails.class)
+
+                    }else{
+
+                        mContext.startActivity(new Intent(mContext, ActivityFanPostDetails.class)
                                 .putExtra("nid", teaserModel.getId())
                                 .putExtra("SiteProtocol", mSiteProtocol)
                                 .putExtra("SiteDomain", mSiteDomain)
+                                .putExtra("sitetitle",teaserModel.getTitle())
+                                .putExtra("vid", teaserModel.vid)
                         );
                     }
-                //}
+
             }
         });
+
         rv_f_explorer_items.setAdapter(adapterDefault);
+
         final EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(manager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
@@ -189,6 +199,7 @@ public class TaxonomyBrowserActivityFragment extends Fragment {
 
             }
         };
+
         rv_f_explorer_items.addOnScrollListener(scrollListener);
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -242,6 +253,9 @@ public class TaxonomyBrowserActivityFragment extends Fragment {
             return;
         }
         Log.d(TAG, "requestApiTaxonomyList onViewCreated: mTid "+mTid+" mVocabularyId "+mVocabularyId);
+
+        System.out.println(mSiteProtocol+mSiteDomain + "/onedrupal/api/v1/vocabulary/"+mVocabularyId+"/"+mTid+"?page=" + pageNumber   + "gghh");
+
         String newUrl = mSiteProtocol+mSiteDomain + "/onedrupal/api/v1/vocabulary/"+mVocabularyId+"/"+mTid+"?page=" + pageNumber;
         Log.d(TAG, "requestApiTaxonomyList: newUrl"+newUrl);
         File httpCacheDirectory = new File(getActivity().getCacheDir(), "offlineCache");

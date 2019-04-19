@@ -86,6 +86,7 @@ import treeutil.Node;
 import treeutil.Tree;
 import treeutil.TreeHolder;
 
+import static com.technikh.onedrupal.app.MyApplication.breadcumList;
 import static com.technikh.onedrupal.network.AddCookiesInterceptor.APP_PREFERENCES;
 
 public class SiteContentTabsActivity extends AppCompatActivity {
@@ -110,7 +111,6 @@ public class SiteContentTabsActivity extends AppCompatActivity {
     private String TAG = "SiteContentTabsActivity";
     private int mNodeTypesSize;
     private ActionBarDrawerToggle mDrawerToggle;
-
     private AccountManager mAccountManager;
     private AuthPreferences mAuthPreferences;
     private String authToken;
@@ -148,6 +148,9 @@ public class SiteContentTabsActivity extends AppCompatActivity {
                     startActivity(intent1);
                     break;
                 case R.id.taxonomyExplorer:
+
+                    breadcumList.clear();
+
                     Intent intent2 = new Intent(SiteContentTabsActivity.this, TaxonomyBrowserActivity.class);
                     intent2.putExtra("SiteProtocol", mSiteProtocol);
                     intent2.putExtra("SiteDomain", mSiteDomain);
@@ -205,11 +208,14 @@ public class SiteContentTabsActivity extends AppCompatActivity {
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         Bundle b = getIntent().getExtras();
-        if(b != null) {
+
+        if(b != null ) {
+
             mNodeTypesSize = b.getInt("nodeTypesSize");
             mSiteProtocol = b.getString("SiteProtocol");
             mSiteDomain = b.getString("SiteDomain");
             mPublicViewMode = b.getBoolean("publicViewMode");
+
         }
 
         mAccountManager = AccountManager.get(this);
