@@ -36,6 +36,7 @@
         </service>
 
         <activity android:name=".activities.ViewImageActivity" />
+
         <activity
             android:name=".activities.ActivitySplash"
             android:configChanges="keyboardHidden|orientation"
@@ -103,7 +104,6 @@
             android:theme="@style/AppTheme" />
         <activity
             android:name=".activities.TaxonomyBrowserActivity"
-            android:label="@string/title_activity_taxonomy_browser"
             android:theme="@style/AppTheme"></activity>
     </application>
 
