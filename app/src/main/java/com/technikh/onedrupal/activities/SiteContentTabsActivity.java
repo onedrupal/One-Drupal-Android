@@ -12,27 +12,24 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.pm.ShortcutInfo;
-import android.content.pm.ShortcutManager;
-import android.graphics.drawable.Icon;
-import android.net.Uri;
 import android.os.Build;
-import android.support.annotation.Nullable;
-import android.support.design.widget.NavigationView;
-import android.support.design.widget.TabLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -43,60 +40,31 @@ import android.view.ViewGroup;
 
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.technikh.onedrupal.R;
 import com.technikh.onedrupal.app.MyApplication;
 import com.technikh.onedrupal.authenticator.AuthPreferences;
 import com.technikh.onedrupal.fragments.FragmentADRedsox;
-import com.technikh.onedrupal.models.ModelNodeType;
 import com.technikh.onedrupal.models.SettingsType;
-import com.technikh.onedrupal.models.SettingsTypeList;
-import com.technikh.onedrupal.models.Site;
-import com.technikh.onedrupal.network.GetSiteDataService;
-import com.technikh.onedrupal.network.RetrofitSiteInstance;
 import com.technikh.onedrupal.util.AccountUtils;
-import com.unnamed.b.atv.model.TreeNode;
-import com.unnamed.b.atv.view.AndroidTreeView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import okhttp3.Cache;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.logging.HttpLoggingInterceptor;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import treeutil.MyObject;
-import treeutil.Node;
-import treeutil.Tree;
-import treeutil.TreeHolder;
 
 import static com.technikh.onedrupal.network.AddCookiesInterceptor.APP_PREFERENCES;
 
 public class SiteContentTabsActivity extends AppCompatActivity {
 
     /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
+     * The {@link PagerAdapter} that will provide
      * fragments for each of the sections. We use a
      * {@link FragmentPagerAdapter} derivative, which will keep every
      * loaded fragment in memory. If this becomes too memory intensive, it
      * may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
+     * {@link FragmentStatePagerAdapter}.
      */
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private FirebaseAnalytics mFirebaseAnalytics;
@@ -453,12 +421,12 @@ public class SiteContentTabsActivity extends AppCompatActivity {
             // Return a PlaceholderFragment (defined as a static inner class below).
             //return PlaceholderFragment.newInstance(position + 1);
             Log.d(TAG, "SectionsPagerAdapter getItem: "+mSiteDomain);
-            SettingsType nTypeObj = MyApplication.gblGetNodeTypeFromPosition(position-2);
-            if(nTypeObj.getNodeType().equals("movies") || nTypeObj.getNodeType().equals("tb_page")){
+            //SettingsType nTypeObj = MyApplication.gblGetNodeTypeFromPosition(position);
+            //if(nTypeObj.getNodeType().equals("movies") || nTypeObj.getNodeType().equals("tb_page")){
                 return FragmentADRedsox.newInstance(position, mSiteProtocol, mSiteDomain);
-            }else {
-                return FragmentADRedsox.newInstance(position, mSiteProtocol, mSiteDomain);
-            }
+            //}else {
+              //  return FragmentADRedsox.newInstance(position, mSiteProtocol, mSiteDomain);
+            //}
         }
 
         @Override

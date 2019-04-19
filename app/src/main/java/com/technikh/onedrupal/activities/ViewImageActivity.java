@@ -13,12 +13,13 @@ import android.graphics.DashPathEffect;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
-import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.annotation.NonNull;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -26,6 +27,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -40,7 +42,6 @@ import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
 import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
 import com.loopj.android.http.RequestParams;
-import com.technikh.onedrupal.BuildConfig;
 import com.technikh.onedrupal.R;
 import com.technikh.onedrupal.helpers.PDUtils;
 import com.technikh.onedrupal.models.ModelFanPosts;
@@ -75,6 +76,7 @@ public class ViewImageActivity extends AppCompatActivity {
     ImagePagerAdapter adapter;
 
     ImageView ivBack, ivLeft, ivRight;
+    EditText et_image_text;
     ProgressDialogAsync _progressDialogAsync;
     private String response_error = "";
     private boolean loading = false;
@@ -100,6 +102,7 @@ public class ViewImageActivity extends AppCompatActivity {
         ivBack = findViewById(R.id.ivBack);
         ivRight = findViewById(R.id.ivRight);
         ivLeft = findViewById(R.id.ivLeft);
+        et_image_text = findViewById(R.id.et_image_text);
         ivBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -197,6 +200,7 @@ public class ViewImageActivity extends AppCompatActivity {
                                     if(rect.contains(touchX,touchY) || rect.contains(touchX - threshold,touchY - threshold) || rect.contains(touchX + threshold,touchY + threshold)){
                                         Log.d(TAG1, "clicked rectangle: "+pair.getValue());
                                         Toast.makeText(getApplicationContext(), " Clicked "+pair.getValue() , Toast.LENGTH_SHORT).show();
+                                        et_image_text.setText(et_image_text.getText()+" "+pair.getValue().toString());
                                         break;
                                     }else{
                                         Log.d(TAG1, pair.getValue()+" onLongPress: not match (int)touchX,(int)touchY) "+(int)touchX+" Y: "+(int)touchY+" rect: left "+rect.left+" top "+rect.top+" right "+rect.right+" bottom "+rect.bottom);
@@ -216,6 +220,23 @@ public class ViewImageActivity extends AppCompatActivity {
                                 }else{*/
                                 originalBitmap = ((BitmapDrawable) ivImage.getDrawable()).getBitmap();
                                 //}
+
+                                // recreate the new Bitmap
+                                /*Bitmap resizedBitmap = Bitmap.createBitmap(originalBitmap, 0, 0,
+                                        300, 300, ivImage.getImageMatrix(), true);*/
+
+                                /*Rect bounds = ivImage.getDrawable().getBounds();
+                                RectF boundsF = new RectF(bounds);
+                                ivImage.getImageMatrix().mapRect(boundsF);
+                                boundsF.round(bounds);*/
+/*
+                                Matrix m = ivImage.getImageMatrix();
+                                RectF drawableRect = new RectF(0, 0, ivImage.getDrawable().getIntrinsicWidth(), ivImage.getDrawable().getIntrinsicHeight());
+                                RectF viewRect = new RectF(0, 0, ivImage.getWidth(), ivImage.getHeight());
+                                m.setRectToRect(drawableRect, viewRect, Matrix.ScaleToFit.CENTER);
+                                ivImage.setImageMatrix(m);
+                                Bitmap resizedBitmap = ((BitmapDrawable) ivImage.getDrawable()).getBitmap();
+*/
                                 visionImage = FirebaseVisionImage.fromBitmap(originalBitmap);
                                 FirebaseVisionTextRecognizer visionDetector = FirebaseVision.getInstance()
                                         .getOnDeviceTextRecognizer();

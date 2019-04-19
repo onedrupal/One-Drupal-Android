@@ -7,12 +7,11 @@ package com.technikh.onedrupal.app;
  */
 
 import android.content.Context;
-import android.support.multidex.MultiDex;
-import android.support.multidex.MultiDexApplication;
+import androidx.multidex.MultiDex;
+import androidx.multidex.MultiDexApplication;
 import android.util.Log;
 
 import com.technikh.onedrupal.models.OneGlobalSettingsSectionModel;
-import com.technikh.onedrupal.models.SettingsType;
 import com.technikh.onedrupal.models.SettingsType;
 
 import java.util.ArrayList;

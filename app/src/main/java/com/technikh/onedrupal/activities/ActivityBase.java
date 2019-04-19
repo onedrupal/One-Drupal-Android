@@ -8,9 +8,9 @@ package com.technikh.onedrupal.activities;
 
 import android.content.Context;
 import android.os.Build;
-import android.support.design.widget.TextInputLayout;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
+import com.google.android.material.textfield.TextInputLayout;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.appcompat.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.EditText;

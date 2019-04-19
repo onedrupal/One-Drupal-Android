@@ -13,8 +13,8 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
@@ -25,7 +25,6 @@ import android.widget.ArrayAdapter;
 
 import com.technikh.onedrupal.R;
 import com.technikh.onedrupal.app.MyApplication;
-import com.technikh.onedrupal.models.ModelNodeType;
 import com.technikh.onedrupal.models.SettingsType;
 
 import java.util.ArrayList;

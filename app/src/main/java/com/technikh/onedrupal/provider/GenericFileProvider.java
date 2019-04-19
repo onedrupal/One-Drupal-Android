@@ -6,7 +6,7 @@ package com.technikh.onedrupal.provider;
  * When a modified version is used to provide a service over a network, the complete source code of the modified version must be made available.
  */
 
-import android.support.v4.content.FileProvider;
+import androidx.core.content.FileProvider;
 
 public class GenericFileProvider extends FileProvider {
 }
