@@ -11,11 +11,13 @@ import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
+import com.technikh.onedrupal.models.BreadcumModel;
 import com.technikh.onedrupal.models.OneGlobalSettingsSectionModel;
 import com.technikh.onedrupal.models.SettingsType;
 import com.technikh.onedrupal.models.SettingsType;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MyApplication extends MultiDexApplication {
@@ -24,7 +26,9 @@ public class MyApplication extends MultiDexApplication {
     private static String TAG = "MyApplication";
     public static List<SettingsType> gblNodeTypeSettings = new ArrayList<SettingsType>();
     public static OneGlobalSettingsSectionModel gblSettingsSection;
-    //public static List<SettingsType> gblSettingsTypeList = new ArrayList<SettingsType>();
+
+    public static List<BreadcumModel>  breadcumList = new ArrayList<>();
+
 
     @Override
     public void onCreate() {
