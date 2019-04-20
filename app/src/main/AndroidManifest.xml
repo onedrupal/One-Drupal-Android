@@ -25,6 +25,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <meta-data
+            android:name="com.google.firebase.ml.vision.DEPENDENCIES"
+            android:value="ocr" />
         <service android:name=".authenticator.AuthenticatorService">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
@@ -81,7 +84,7 @@
             android:theme="@style/AppTheme" />
 
         <provider
-            android:name="android.support.v4.content.FileProvider"
+            android:name="androidx.core.content.FileProvider"
             android:authorities="com.technikh.onedrupal.provider"
             android:exported="false"
             android:grantUriPermissions="true">

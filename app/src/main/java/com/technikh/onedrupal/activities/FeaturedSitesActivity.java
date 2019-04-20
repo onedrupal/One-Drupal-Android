@@ -6,28 +6,21 @@ package com.technikh.onedrupal.activities;
  * When a modified version is used to provide a service over a network, the complete source code of the modified version must be made available.
  */
 
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.technikh.onedrupal.R;
 
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import com.technikh.onedrupal.adapter.SiteAdapter;
 import com.technikh.onedrupal.models.Site;
-import com.technikh.onedrupal.models.SiteList;
-import com.technikh.onedrupal.network.GetSiteDataService;
-import com.technikh.onedrupal.network.RetrofitOneDrupalInstance;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class FeaturedSitesActivity extends AppCompatActivity {
 
@@ -52,8 +45,9 @@ public class FeaturedSitesActivity extends AppCompatActivity {
         toolbar.setTitle("Featured Sites");
 
         ArrayList<Site> empDataList = new ArrayList<Site>();
+        empDataList.add(new Site("http://", "one-drupal-demo.technikh.com"));
         empDataList.add(new Site("https://", "nikhil.dubbaka.com"));
-        //empDataList.add(new Site("http://", "app.eschool2go.org"));
+        empDataList.add(new Site("http://", "app.eschool2go.org"));
         generateEmployeeList(empDataList);
 /*
         //Create handle for the RetrofitOneDrupalInstance interface

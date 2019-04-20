@@ -14,14 +14,14 @@ import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.widget.SlidingPaneLayout;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.slidingpanelayout.widget.SlidingPaneLayout;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.TextUtils;
@@ -29,35 +29,31 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.loopj.android.http.JsonHttpResponseHandler;
+import com.bumptech.glide.Glide;
 import com.loopj.android.http.RequestParams;
 import com.otaliastudios.autocomplete.Autocomplete;
 import com.otaliastudios.autocomplete.AutocompleteCallback;
 import com.otaliastudios.autocomplete.AutocompletePolicy;
 import com.otaliastudios.autocomplete.AutocompletePresenter;
-import com.technikh.onedrupal.BuildConfig;
+//import com.stfalcon.imageviewer.StfalconImageViewer;
+//import com.stfalcon.imageviewer.loader.ImageLoader;
 import com.technikh.onedrupal.R;
 import com.technikh.onedrupal.activities.ActivityFanPostDetails;
-import com.technikh.onedrupal.activities.SiteContentTabsActivity;
 import com.technikh.onedrupal.activities.ViewImageActivity;
 import com.technikh.onedrupal.adapter.AdapterFanPosts;
 import com.technikh.onedrupal.adapter.GalleryAdapter;
 import com.technikh.onedrupal.app.MyApplication;
 import com.technikh.onedrupal.authenticator.AuthPreferences;
-import com.technikh.onedrupal.helpers.PDRestClient;
 import com.technikh.onedrupal.helpers.PDUtils;
 import com.technikh.onedrupal.helpers.UserPresenter;
 import com.technikh.onedrupal.models.ModelFanPosts;
 import com.technikh.onedrupal.models.SettingsType;
-import com.technikh.onedrupal.models.SettingsTypeList;
 import com.technikh.onedrupal.models.User;
 import com.technikh.onedrupal.models.VocabTerm;
 import com.technikh.onedrupal.models.VocabTermsList;
@@ -70,7 +66,6 @@ import com.unnamed.b.atv.model.TreeNode;
 import com.unnamed.b.atv.view.AndroidTreeView;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -78,13 +73,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import cz.msebera.android.httpclient.Header;
 import okhttp3.Cache;
 import okhttp3.CacheControl;
 import okhttp3.Call;
@@ -294,16 +287,7 @@ public class FragmentADRedsox extends FragmentBase implements View.OnClickListen
             });
             rv_f_redsox_recycler.setAdapter(adapterDefault);
         }else{
-            adapterGallery = new GalleryAdapter(context, modelFanPostsArrayList, new GalleryAdapter.RecyclerViewClickListener() {
-                @Override
-                public void onItemClickListener(View v, int position) {
-                    Intent intent = new Intent(getActivity(), ViewImageActivity.class);
-                    intent.putExtra("posts", modelFanPostsArrayList);
-                    intent.putExtra("position", position);
-                    startActivity(intent);
-                }
-            });
-            rv_f_redsox_recycler.setAdapter(adapterGallery);
+
         }
 
 
@@ -337,6 +321,41 @@ public class FragmentADRedsox extends FragmentBase implements View.OnClickListen
         if(tab >= 2) {
             requestTaxonomyApiFilters();
         }
+    }
+
+    private void setupGalleryRecyclerView(){
+        /*rv_f_redsox_recycler.setVisibility(View.GONE);
+        List<String> RESOURCES = new ArrayList<>();
+        RESOURCES.add("https://raw.githubusercontent.com/stfalcon-studio/StfalconImageViewer/master/images/posters/Vincent.jpg");
+        RESOURCES.add("https://github.com/stfalcon-studio/StfalconImageViewer/blob/master/images/posters/Driver.jpg?raw=true");
+        new StfalconImageViewer.Builder<String>(getContext(), RESOURCES, new ImageLoader<String>() {
+            @Override
+            public void loadImage(ImageView imageView, String image) {
+                Log.d(TAG, "loadImage: "+image);
+                Glide.with(getContext())
+                        .load(image)
+                        .into(imageView);
+            }
+        }).show();*/
+        adapterGallery = new GalleryAdapter(context, modelFanPostsArrayList, new GalleryAdapter.RecyclerViewClickListener() {
+            @Override
+            public void onItemClickListener(View v, int position) {
+               /* new StfalconImageViewer.Builder<ModelFanPosts>(getContext(), modelFanPostsArrayList, new ImageLoader<ModelFanPosts>() {
+                    @Override
+                    public void loadImage(ImageView imageView, ModelFanPosts image) {
+                        Log.d(TAG, "loadImage: "+image.getField_image());
+                        Glide.with(getContext())
+                                .load(image.getField_image())
+                                .into(imageView);
+                    }
+                }).show();*/
+                Intent intent = new Intent(getActivity(), ViewImageActivity.class);
+                intent.putExtra("posts", modelFanPostsArrayList);
+                intent.putExtra("position", position);
+                startActivity(intent);
+            }
+        });
+        rv_f_redsox_recycler.setAdapter(adapterGallery);
     }
 
     private void constructTree(ArrayList<MyObject> categories1, final String vocabularyName) {
@@ -616,6 +635,10 @@ public class FragmentADRedsox extends FragmentBase implements View.OnClickListen
             }else{
                 urlSlug = "content";
             }
+            if(nTypeObj.getNodeType().equals("movies") || nTypeObj.getNodeType().equals("tb_page")){
+                galleryMode = true;
+                setupGalleryRecyclerView();
+            }
         }
 
         response_error = "";
@@ -745,6 +768,7 @@ public class FragmentADRedsox extends FragmentBase implements View.OnClickListen
                                         // modelFanPostsArrayList.add(modelFanPosts);
                                         if (modelFanPosts.isValidNodeType()) {
                                             if(galleryMode){
+                                                Log.d(TAG, "run: galleryMode addOneRequestData "+j);
                                                 adapterGallery.addOneRequestData(modelFanPosts);
                                             }else {
                                                 adapterDefault.addOneRequestData(modelFanPosts);
@@ -753,6 +777,7 @@ public class FragmentADRedsox extends FragmentBase implements View.OnClickListen
                                     }
                                     if(galleryMode){
                                         adapterGallery.notifyDataSetChanged();
+                                       // viewerView.updateImages(images);
                                     }else {
                                         adapterDefault.notifyDataSetChanged();
                                     }

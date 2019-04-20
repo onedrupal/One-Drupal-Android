@@ -15,16 +15,7 @@ import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.app.LoaderManager.LoaderCallbacks;
 
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.AsyncTask;
 
 import android.os.Build;
@@ -36,13 +27,11 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
 //import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,26 +44,10 @@ import com.technikh.onedrupal.app.MyApplication;
 import com.technikh.onedrupal.authenticator.AuthPreferences;
 import com.technikh.onedrupal.models.SettingsType;
 import com.technikh.onedrupal.models.SettingsTypeList;
-import com.technikh.onedrupal.network.DrupalAPI;
 import com.technikh.onedrupal.network.GetSiteDataService;
-import com.technikh.onedrupal.network.OnSettingsApiGetTaskCompleted;
 import com.technikh.onedrupal.network.RetrofitSiteInstance;
 import com.technikh.onedrupal.util.AccountUtils;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-
-import java.io.IOException;
-
-import static android.Manifest.permission.READ_CONTACTS;
 import static com.technikh.onedrupal.app.MyApplication.gblSettingsSection;
 
 /**

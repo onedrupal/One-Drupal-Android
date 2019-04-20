@@ -6,21 +6,42 @@ package com.technikh.onedrupal.activities;
  * When a modified version is used to provide a service over a network, the complete source code of the modified version must be made available.
  */
 
-import android.support.annotation.NonNull;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.DashPathEffect;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.graphics.drawable.BitmapDrawable;
+
+import androidx.annotation.NonNull;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.bogdwellers.pinchtozoom.ImageMatrixTouchHandler;
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.ml.vision.FirebaseVision;
+import com.google.firebase.ml.vision.common.FirebaseVisionImage;
+import com.google.firebase.ml.vision.text.FirebaseVisionText;
+import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
 import com.loopj.android.http.RequestParams;
-import com.technikh.onedrupal.BuildConfig;
 import com.technikh.onedrupal.R;
 import com.technikh.onedrupal.helpers.PDUtils;
 import com.technikh.onedrupal.models.ModelFanPosts;
@@ -32,7 +53,10 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Cache;
@@ -52,10 +76,16 @@ public class ViewImageActivity extends AppCompatActivity {
     ImagePagerAdapter adapter;
 
     ImageView ivBack, ivLeft, ivRight;
+    EditText et_image_text;
     ProgressDialogAsync _progressDialogAsync;
     private String response_error = "";
     private boolean loading = false;
     int page = 0;
+    private String TAG1 = "ViewImageActivity";
+    Map<Rect, String> visionTextRectangles = new HashMap<Rect, String>();
+    //private List<Rect> visionTextRectangles = new ArrayList<Rect>();;
+
+    FirebaseVisionImage visionImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +102,7 @@ public class ViewImageActivity extends AppCompatActivity {
         ivBack = findViewById(R.id.ivBack);
         ivRight = findViewById(R.id.ivRight);
         ivLeft = findViewById(R.id.ivLeft);
+        et_image_text = findViewById(R.id.et_image_text);
         ivBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -135,10 +166,138 @@ public class ViewImageActivity extends AppCompatActivity {
             collection.addView(layout);
 
             ImageView ivImage = layout.findViewById(R.id.ivImage);
+            /*ivImage.setOnLongClickListener(new View.OnLongClickListener()
+            {
+                @Override
+                public boolean onLongClick(View v)
+                {
+                    Toast.makeText(getApplicationContext(), "Long Clicked " , Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            });*/
+
             Glide.with(ViewImageActivity.this)
                     .load(posts.get(position).getField_image())
                     .into(ivImage);
-            ivImage.setOnTouchListener(new ImageMatrixTouchHandler(layout.getContext()));
+            ImageMatrixTouchHandler imageMatrixTouchHandler = new ImageMatrixTouchHandler(layout.getContext()){
+                @Override
+                public boolean onTouch(View view, MotionEvent event) {
+                    //Log.d(TAG1, "onTouch: ");
+                    super.onTouch(view, event);
+                    //Log.d(TAG1, "onTouch: super");
+                    final GestureDetector gestureDetector = new GestureDetector(ViewImageActivity.this, new GestureDetector.SimpleOnGestureListener() {
+                        public void onLongPress(MotionEvent e) {
+                            int touchX = (int)event.getX();
+                            int touchY = (int)event.getY();
+                            //Log.e(TAG1, "Longpress detected event "+event.getAction()+" e "+e.getAction());
+                            if(event.getAction() == MotionEvent.ACTION_UP) {
+                                Log.d(TAG1, "onLongPress: MotionEvent.ACTION_UP visionTextRectangles size "+visionTextRectangles.size());
+                                Iterator it = visionTextRectangles.entrySet().iterator();
+                                while (it.hasNext()) {
+                                    Map.Entry pair = (Map.Entry)it.next();
+                                    Rect rect = (Rect)pair.getKey();
+                                    int threshold = 100;
+                                    if(rect.contains(touchX,touchY) || rect.contains(touchX - threshold,touchY - threshold) || rect.contains(touchX + threshold,touchY + threshold)){
+                                        Log.d(TAG1, "clicked rectangle: "+pair.getValue());
+                                        Toast.makeText(getApplicationContext(), " Clicked "+pair.getValue() , Toast.LENGTH_SHORT).show();
+                                        et_image_text.setText(et_image_text.getText()+" "+pair.getValue().toString());
+                                        break;
+                                    }else{
+                                        Log.d(TAG1, pair.getValue()+" onLongPress: not match (int)touchX,(int)touchY) "+(int)touchX+" Y: "+(int)touchY+" rect: left "+rect.left+" top "+rect.top+" right "+rect.right+" bottom "+rect.bottom);
+                                    }
+                                    System.out.println(pair.getKey() + " = " + pair.getValue());
+                                    //it.remove(); // avoids a ConcurrentModificationException
+                                }
+                                Log.d(TAG1, "onLongPress: visionTextRectangles size "+visionTextRectangles.size());
+                            }else if(event.getAction() == MotionEvent.ACTION_DOWN){
+                                Log.d(TAG1, "onLongPress: real detected X: "+e.getX()+" Y: "+e.getY()+" event X: "+event.getX()+" Y: "+event.getY()+" raw Y"+event.getRawY());
+                                Toast.makeText(getApplicationContext(), "Long Clicked " , Toast.LENGTH_SHORT).show();
+
+                                //Matrix matrix = ivImage.getImageMatrix();
+                                Bitmap originalBitmap;
+                                /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                    bitmap = ((BitmapDrawable) ivImage.getForeground()).getBitmap();
+                                }else{*/
+                                originalBitmap = ((BitmapDrawable) ivImage.getDrawable()).getBitmap();
+                                //}
+
+                                // recreate the new Bitmap
+                                /*Bitmap resizedBitmap = Bitmap.createBitmap(originalBitmap, 0, 0,
+                                        300, 300, ivImage.getImageMatrix(), true);*/
+
+                                /*Rect bounds = ivImage.getDrawable().getBounds();
+                                RectF boundsF = new RectF(bounds);
+                                ivImage.getImageMatrix().mapRect(boundsF);
+                                boundsF.round(bounds);*/
+/*
+                                Matrix m = ivImage.getImageMatrix();
+                                RectF drawableRect = new RectF(0, 0, ivImage.getDrawable().getIntrinsicWidth(), ivImage.getDrawable().getIntrinsicHeight());
+                                RectF viewRect = new RectF(0, 0, ivImage.getWidth(), ivImage.getHeight());
+                                m.setRectToRect(drawableRect, viewRect, Matrix.ScaleToFit.CENTER);
+                                ivImage.setImageMatrix(m);
+                                Bitmap resizedBitmap = ((BitmapDrawable) ivImage.getDrawable()).getBitmap();
+*/
+                                visionImage = FirebaseVisionImage.fromBitmap(originalBitmap);
+                                FirebaseVisionTextRecognizer visionDetector = FirebaseVision.getInstance()
+                                        .getOnDeviceTextRecognizer();
+
+                                Task<FirebaseVisionText> result =
+                                        visionDetector.processImage(visionImage)
+                                                .addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
+                                                    @Override
+                                                    public void onSuccess(FirebaseVisionText firebaseVisionText) {
+                                                        // Task completed successfully
+                                                        // ...
+                                                        Log.d(TAG1, "visionDetector onSuccess: "+ firebaseVisionText.getText());
+                                                        List<FirebaseVisionText.TextBlock> textBlocks = firebaseVisionText.getTextBlocks();
+                                                        visionTextRectangles.clear();
+                                                        for (int i=0; i<textBlocks.size(); i++) {
+                                                            FirebaseVisionText.TextBlock tBlock = textBlocks.get(i);
+                                                            List<FirebaseVisionText.Line> tBlockLines = tBlock.getLines();
+                                                            for (int j=0; j<tBlockLines.size(); j++) {
+                                                                FirebaseVisionText.Line tLine = tBlockLines.get(j);
+                                                                List<FirebaseVisionText.Element> tLineElements = tLine.getElements();
+                                                                for (int k=0; k<tLineElements.size(); k++) {
+                                                                    FirebaseVisionText.Element tElement = tLineElements.get(k);
+                                                                    Rect boundingRect = tElement.getBoundingBox();
+                                                                    Log.d(TAG1, "onSuccess: visionTextRectangles " + tElement.getText());
+                                                                    visionTextRectangles.put(boundingRect, tElement.getText());
+
+                                                                    Canvas canvas = new Canvas(originalBitmap);
+                                                                    // Initialize a new Paint instance to draw the Rectangle
+                                                                    Paint paint = new Paint();
+                                                                    paint.setStyle(Paint.Style.STROKE);
+                                                                    paint.setStrokeWidth(2);
+                                                                    paint.setPathEffect(new DashPathEffect(new float[]{2, 2}, 0));
+                                                                    paint.setColor(Color.YELLOW);
+                                                                    paint.setAntiAlias(true);
+
+                                                                    canvas.drawBitmap(originalBitmap, 0, 0, paint);
+                                                                    //canvas.drawText("Testing...", 10, 10, paint);
+                                                                    canvas.drawRect(boundingRect, paint);
+                                                                }
+                                                            }
+                                                        }
+                                                        ivImage.invalidate();
+                                                    }
+                                                })
+                                                .addOnFailureListener(
+                                                        new OnFailureListener() {
+                                                            @Override
+                                                            public void onFailure(@NonNull Exception e) {
+                                                                // Task failed with an exception
+                                                                // ...
+                                                                Log.d(TAG1, "visionDetector onFailure: "+e.getMessage());
+                                                            }
+                                                        });
+                            }
+                        }
+                    });
+                    gestureDetector.onTouchEvent(event);
+                    return true; // indicate event was handled
+                }
+            };
+            ivImage.setOnTouchListener(imageMatrixTouchHandler);
             if (position == posts.size() - 1) {
                 page = page + 1;
                 requestNewsList(page);
