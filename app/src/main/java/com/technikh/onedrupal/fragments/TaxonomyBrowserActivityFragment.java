@@ -99,10 +99,17 @@ public class TaxonomyBrowserActivityFragment extends Fragment {
             Log.d(TAG, "onViewCreated: bundle not null");
             mSiteProtocol = bundle.getString("SiteProtocol");
             mSiteDomain = bundle.getString("SiteDomain");
+            sitetitle = bundle.getString("sitetitle");
             mTid = bundle.getString("tid");
             mVocabularyId = bundle.getString("vid");
 
             Log.d(TAG, "onBreadcum: mTid "+mTid+" mVocabularyId "+mVocabularyId + mSiteProtocol);
+
+            if(mTid == null || mTid.isEmpty()){
+                mTid = "0";
+
+            }
+
             if(mTid == null || mTid.isEmpty()){
                 mTid = "0";
 
@@ -136,6 +143,7 @@ public class TaxonomyBrowserActivityFragment extends Fragment {
                 teaserModel.setId(String.valueOf(0));
                 teaserModel.vid = vid;
                 teaserModel.setTitle(vid);
+
                 adapterDefault.addOneRequestData(teaserModel, true);
                 adapterDefault.notifyDataSetChanged();
             }
@@ -155,6 +163,8 @@ public class TaxonomyBrowserActivityFragment extends Fragment {
         rv_f_explorer_items.setLayoutManager(manager);
         rv_f_explorer_items.setItemAnimator(new DefaultItemAnimator());
 
+        System.out.println("breadcumcheckimhere");
+
         adapterDefault = new TeaserAdapter(mContext, dataList, new TeaserAdapter.RecyclerViewClickListener() {
             @Override
             public void onItemClickListener(View v, int position) {
@@ -163,15 +173,15 @@ public class TaxonomyBrowserActivityFragment extends Fragment {
 
                     if(teaserModel.getEntityType().equals("taxonomy")){
 
-                        mContext.startActivity(new Intent(mContext, TaxonomyBrowserActivity.class)
-                                .putExtra("tid", teaserModel.getId())
-                                .putExtra("vid", teaserModel.vid)
-                                .putExtra("SiteProtocol", mSiteProtocol)
-                                .putExtra("SiteDomain", mSiteDomain)
-                                .putExtra("sitetitle",teaserModel.getTitle())
-                        );
+                       Intent i = new Intent(mContext, TaxonomyBrowserActivity.class);
+                        i.putExtra("tid", teaserModel.getId());
+                        i .putExtra("vid", teaserModel.vid);
+                        i .putExtra("SiteProtocol", mSiteProtocol);
+                        i  .putExtra("SiteDomain", mSiteDomain);
+                        i.putExtra("sitetitle",teaserModel.getTitle());
+                        mContext.startActivity(i);
 
-                    }else{
+                        }else{
 
                         mContext.startActivity(new Intent(mContext, ActivityFanPostDetails.class)
                                 .putExtra("nid", teaserModel.getId())
@@ -181,7 +191,6 @@ public class TaxonomyBrowserActivityFragment extends Fragment {
                                 .putExtra("vid", teaserModel.vid)
                         );
                     }
-
             }
         });
 
@@ -193,6 +202,7 @@ public class TaxonomyBrowserActivityFragment extends Fragment {
                 Log.d(TAG, "onLoadMore: page "+page+" totalItemsCount "+totalItemsCount+" getItemCount "+adapterDefault.getItemCount());
 
                 if(!mVocabularyId.equals("all") && (totalItemsCount < adapterDefault.getItemCount())) {
+
                     requestApiTaxonomyList(page, false);
                     requestApiNodeList(page, false);
                 }
@@ -204,6 +214,7 @@ public class TaxonomyBrowserActivityFragment extends Fragment {
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+
                 swipeContainer.setRefreshing(false);
                 scrollListener.resetValues(manager);
                 if(!mVocabularyId.equals("all")) {

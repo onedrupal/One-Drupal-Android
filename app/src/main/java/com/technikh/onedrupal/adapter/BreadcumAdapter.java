@@ -42,7 +42,14 @@ public class BreadcumAdapter extends RecyclerView.Adapter<BreadcumAdapter.MyView
         @Override
         public void onBindViewHolder(MyViewHolder holder, int position) {
 
-            holder.title.setText(itemList.get(position).getXYZ());
+            if (itemList.get(position).getXYZ() == null){
+
+                holder.title.setText(itemList.get(position).getVocabId());
+
+            }else{
+
+                holder.title.setText(itemList.get(position).getXYZ());
+            }
 
 
             holder.title.setOnClickListener(new View.OnClickListener() {

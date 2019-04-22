@@ -39,6 +39,7 @@ public class TaxonomyBrowserActivity extends AppCompatActivity  implements Bread
     private BreadcumAdapter breadcumAdapter;
     private TextView browser ;
     FloatingActionButton fab ;
+    String sitetitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,14 +64,14 @@ public class TaxonomyBrowserActivity extends AppCompatActivity  implements Bread
 
         if (intent != null) {
 
-            String sitetitle = intent.getStringExtra("sitetitle");
+            sitetitle = intent.getStringExtra("sitetitle");
 
             String tid = intent.getStringExtra("tid");
 
             String vid = intent.getStringExtra("vid");
 
 
-            if (sitetitle == null ){
+            if (vid == null ){
 
                 breadcum_rv.setVisibility(View.GONE);
 
@@ -117,10 +118,8 @@ public class TaxonomyBrowserActivity extends AppCompatActivity  implements Bread
                 myIntent.putExtra("SiteDomain", "one-drupal-demo.technikh.com/");
                 myIntent.putExtra("tid", "0");
                 myIntent.putExtra("vid", "all");
-
-
-
                 startActivity(myIntent);
+
 
             }
         });
@@ -136,7 +135,7 @@ public class TaxonomyBrowserActivity extends AppCompatActivity  implements Bread
         myIntent.putExtra("SiteDomain", "one-drupal-demo.technikh.com/");
         myIntent.putExtra("tid", titleid);
         myIntent.putExtra("vid", vocabularyid);
-
+        myIntent.putExtra("SiteTitle", sitetitle);
         startActivity(myIntent);
 
     }
