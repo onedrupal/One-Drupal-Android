@@ -93,7 +93,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-
+                <com.stfalcon.sample.common.ui.views.PostersGridView
+                    android:id="@+id/postersGridView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/rv_f_redsox_recycler"
                     android:layout_width="match_parent"
