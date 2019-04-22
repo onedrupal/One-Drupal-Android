@@ -1,58 +1,87 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2019. Nikhil Dubbaka from TechNikh.com under GNU AFFERO GENERAL PUBLIC LICENSE
   ~ Copyright and license notices must be preserved.
   ~ When a modified version is used to provide a service over a network, the complete source code of the modified version must be made available.
   -->
-
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.sothree.slidinguppanel.SlidingUpPanelLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:sothree="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/sliding_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/color_black"
-    tools:context=".activities.ViewImageActivity">
-
+    android:gravity="bottom"
+    sothree:umanoPanelHeight="68dp"
+    sothree:umanoShadowHeight="4dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/color_black"
+        tools:context=".activities.ViewImageActivity">
 
-        <android.support.v4.view.ViewPager
-            android:id="@+id/viewPager"
+
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"></android.support.v4.view.ViewPager>
+            android:layout_height="match_parent">
+
+            <androidx.viewpager.widget.ViewPager
+                android:id="@+id/viewPager"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"></androidx.viewpager.widget.ViewPager>
+
+            <ImageView
+                android:id="@+id/ivLeft"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:background="@color/white_mask"
+                android:padding="@dimen/dimen_5dp"
+                app:srcCompat="@drawable/ic_left"
+                android:visibility="gone"
+
+                />
+
+            <ImageView
+                android:id="@+id/ivRight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:background="@color/white_mask"
+
+                android:padding="@dimen/dimen_5dp"
+                app:srcCompat="@drawable/ic_right" />
+        </RelativeLayout>
 
         <ImageView
-            android:id="@+id/ivLeft"
+            android:id="@+id/ivBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:visibility="gone"
-            android:layout_centerVertical="true"
-            android:background="@color/white_mask"
-            android:padding="@dimen/dimen_5dp"
-            android:src="@drawable/ic_left"
+            android:layout_margin="@dimen/dimen_10dp"
+            app:srcCompat="@drawable/ic_back" />
 
-            />
-
-        <ImageView
-            android:id="@+id/ivRight"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:background="@color/white_mask"
-
-            android:padding="@dimen/dimen_5dp"
-            android:src="@drawable/ic_right" />
     </RelativeLayout>
+    <!-- SLIDING bottom LAYOUT -->
+    <LinearLayout
+        android:id="@+id/dragView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#ffffff"
+        android:clickable="true"
+        android:focusable="false"
+        android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/ivBack"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/dimen_10dp"
-        android:src="@drawable/ic_back" />
-
-</RelativeLayout>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/et_image_text"
+            android:gravity="top|left"
+            android:inputType="textMultiLine"
+            android:lines="8"
+            android:maxLines="10"
+            android:minLines="6"
+            android:scrollbars="vertical" />
+    </LinearLayout>
+</com.sothree.slidinguppanel.SlidingUpPanelLayout>

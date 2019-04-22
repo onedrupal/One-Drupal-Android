@@ -11,11 +11,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+
 import android.text.Html;
 import android.util.Log;
 import android.view.View;
@@ -26,43 +25,33 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
-import com.technikh.onedrupal.BuildConfig;
 import com.technikh.onedrupal.R;
+
 import com.technikh.onedrupal.adapter.BreadcumAdapter;
 import com.technikh.onedrupal.app.MyApplication;
 import com.technikh.onedrupal.authenticator.AuthPreferences;
 import com.technikh.onedrupal.helpers.PDRestClient;
 import com.technikh.onedrupal.helpers.PDUtils;
 import com.technikh.onedrupal.models.BreadcumModel;
+
 import com.technikh.onedrupal.models.ModelFanPosts;
 import com.technikh.onedrupal.models.ModelNodeType;
-import com.technikh.onedrupal.models.SettingsType;
-import com.technikh.onedrupal.models.nodeData;
-import com.technikh.onedrupal.models.nodeDeserializer;
 import com.technikh.onedrupal.network.AddCookiesInterceptor;
-import com.technikh.onedrupal.network.GetDrupalNodeDataService;
 import com.technikh.onedrupal.network.GetSiteDataService;
-import com.technikh.onedrupal.network.RetrofitDrupalNodeInstance;
 import com.technikh.onedrupal.network.RetrofitSiteInstance;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import cz.msebera.android.httpclient.Header;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 import static com.technikh.onedrupal.app.MyApplication.breadcumList;
 

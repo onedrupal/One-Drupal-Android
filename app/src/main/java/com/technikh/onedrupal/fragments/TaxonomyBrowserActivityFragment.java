@@ -8,34 +8,33 @@ package com.technikh.onedrupal.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+
 import android.content.SharedPreferences;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.loopj.android.http.RequestParams;
+
 import com.technikh.onedrupal.R;
 import com.technikh.onedrupal.activities.ActivityFanPostDetails;
 import com.technikh.onedrupal.activities.TaxonomyBrowserActivity;
-import com.technikh.onedrupal.adapter.AdapterFanPosts;
 import com.technikh.onedrupal.adapter.TeaserAdapter;
-import com.technikh.onedrupal.app.MyApplication;
 import com.technikh.onedrupal.authenticator.AuthPreferences;
-import com.technikh.onedrupal.helpers.PDUtils;
 import com.technikh.onedrupal.models.ModelFanPosts;
-import com.technikh.onedrupal.models.SettingsType;
 import com.technikh.onedrupal.models.TaxonomyTermModel;
 import com.technikh.onedrupal.models.TeaserModel;
-import com.technikh.onedrupal.models.VocabTerm;
 import com.technikh.onedrupal.network.AddCookiesInterceptor;
 import com.technikh.onedrupal.network.ProvideCacheInterceptor;
 import com.technikh.onedrupal.network.ProvideOfflineCacheInterceptor;
@@ -46,10 +45,12 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import okhttp3.Cache;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -57,8 +58,10 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
+
 import treeutil.MyObject;
 import static android.content.Context.MODE_PRIVATE;
+
 import static com.technikh.onedrupal.app.MyApplication.gblSettingsSection;
 
 /**

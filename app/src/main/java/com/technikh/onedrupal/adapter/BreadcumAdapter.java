@@ -1,7 +1,6 @@
 package com.technikh.onedrupal.adapter;
 
 
-    import android.support.v7.widget.RecyclerView;
     import android.view.LayoutInflater;
     import android.view.View;
     import android.view.ViewGroup;
@@ -11,6 +10,8 @@ package com.technikh.onedrupal.adapter;
 
     import java.util.ArrayList;
     import java.util.List;
+
+    import androidx.recyclerview.widget.RecyclerView;
 
 
 public class BreadcumAdapter extends RecyclerView.Adapter<BreadcumAdapter.MyViewHolder> {

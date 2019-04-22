@@ -12,7 +12,7 @@
     android:background="@color/app_bg"
     android:orientation="vertical">
 
-    <android.support.design.widget.TabLayout
+    <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabs_f_home"
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
@@ -29,7 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v4.view.ViewPager
+        <androidx.viewpager.widget.ViewPager
             android:id="@+id/pager_f_home"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

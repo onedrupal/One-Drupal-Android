@@ -8,24 +8,20 @@ package com.technikh.onedrupal.activities;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.accounts.AccountManagerCallback;
-import android.accounts.AccountManagerFuture;
-import android.accounts.OperationCanceledException;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
+
+import androidx.annotation.Nullable;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.widget.Toolbar;
+
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -34,26 +30,16 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 /*import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;*/
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.loopj.android.http.RequestParams;
-import com.technikh.onedrupal.BuildConfig;
 import com.technikh.onedrupal.R;
 import com.technikh.onedrupal.app.MyApplication;
 import com.technikh.onedrupal.authenticator.AuthPreferences;
 import com.technikh.onedrupal.fragments.FragmentADHome;
 import com.technikh.onedrupal.helpers.PDUtils;
-import com.technikh.onedrupal.models.ModelFanPosts;
-import com.technikh.onedrupal.models.ModelNodeType;
 import com.technikh.onedrupal.models.SettingsType;
-import com.technikh.onedrupal.models.TreeChild;
-import com.technikh.onedrupal.provider.PersistData;
 import com.technikh.onedrupal.util.AccountUtils;
 import com.unnamed.b.atv.model.TreeNode;
 import com.unnamed.b.atv.view.AndroidTreeView;
@@ -80,10 +66,6 @@ import treeutil.MyObject;
 import treeutil.Node;
 import treeutil.Tree;
 import treeutil.TreeHolder;
-
-import static com.technikh.onedrupal.models.ConstantData.EMAIL;
-import static com.technikh.onedrupal.models.ConstantData.FULL_NAME;
-import static com.technikh.onedrupal.models.ConstantData.PROFILE_PICTURE;
 
 public class ActivityDashboard extends ActivityBase {
 
