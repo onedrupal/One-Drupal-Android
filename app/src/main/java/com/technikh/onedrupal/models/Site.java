@@ -13,10 +13,13 @@ public class Site {
     private String mProtocol;
     @SerializedName("domain")
     private String mDomain;
+    @SerializedName("title")
+    private String mTitle;
 
-    public Site(String protocol, String domain) {
+    public Site(String protocol, String domain, String title) {
         this.mProtocol = protocol;
         this.mDomain = domain;
+        this.mTitle = title;
     }
 
     public String getProtocol() {
@@ -29,6 +32,10 @@ public class Site {
 
     public String getDomain() {
         return mDomain;
+    }
+
+    public String getTitle() {
+        return mTitle;
     }
 
     public void setDomain(String email) {

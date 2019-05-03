@@ -6,11 +6,6 @@ apply plugin: 'com.android.application'
  * When a modified version is used to provide a service over a network, the complete source code of the modified version must be made available.
  */
 
-// Load keystore
-def keystorePropertiesFile = rootProject.file("keystore.properties");
-def keystoreProperties = new Properties()
-keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
-
 def apikeyPropertiesFile = rootProject.file("apikey.properties");
 def apikeyProperties = new Properties()
 apikeyProperties.load(new FileInputStream(apikeyPropertiesFile))
@@ -35,40 +30,16 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    // Signing configs
-    signingConfigs {
-        release {
-            storeFile file(keystoreProperties['storeFile'])
-            storePassword keystoreProperties['storePassword']
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-        }
-        debug {
-            storeFile file(keystoreProperties['storeFile'])
-            storePassword keystoreProperties['storePassword']
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-        }
-    }
 
     buildTypes {
         release {
             minifyEnabled false
             debuggable false
-            signingConfig signingConfigs.release
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            buildConfigField("String", "PLATFORM", "\"AND\"")
         }
         debug {
             //applicationIdSuffix ".debug"
             minifyEnabled false
             debuggable true
-            signingConfig signingConfigs.debug
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            buildConfigField("String", "API_KEY", "\"test\"")
-            buildConfigField("String", "PLATFORM", "\"AND\"")
-            buildConfigField("String", "AUTH_BASIC_KEY", "\"tipkart\"")
-            buildConfigField("String", "AUTH_BASIC_VALUE", "\"123456\"")
         }
     }
 }
@@ -83,7 +54,7 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.0.0-beta01'
     //implementation 'com.google.android.gms:play-services-auth:16.0.1'
     implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
-    implementation 'com.github.bumptech.glide:glide:4.6.1'
+    implementation 'com.github.bumptech.glide:glide:4.9.0'
     //implementation 'com.mcxiaoke.volley:library-aar:1.0.0'
     implementation 'com.android.volley:volley:1.1.0'
     implementation 'com.loopj.android:android-async-http:1.4.9'

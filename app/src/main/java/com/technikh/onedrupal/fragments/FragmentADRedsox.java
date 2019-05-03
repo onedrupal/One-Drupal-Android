@@ -314,7 +314,7 @@ public class FragmentADRedsox extends FragmentBase implements View.OnClickListen
                 requestNewsList(0, true);
             }
         });
-       // setupUserAutocomplete();
+        setupUserAutocomplete();
 
         requestNewsList(0, false);
         Log.d(TAG, "onViewCreated: tab"+tab);

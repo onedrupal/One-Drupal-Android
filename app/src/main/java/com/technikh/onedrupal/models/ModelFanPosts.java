@@ -53,29 +53,31 @@ public class ModelFanPosts implements Parcelable {
             this.title = jo.getJSONArray("title").getJSONObject(0).getString("value");
 
             this.isValidNodeType = MyApplication.gblIsValidNodeType(node_type);
-            String bodyField = MyApplication.gblGetBodyFieldName(node_type);
-            if (jo.has(bodyField) && !jo.isNull(bodyField) && (jo.getJSONArray(bodyField).length() > 0)) {
-                this.body = jo.getJSONArray(bodyField).getJSONObject(0).getString("value");
-            }
-            String imageField = MyApplication.gblGetImageFieldName(node_type);
-            String remoteImageField = NodeTypeObj.getFieldsList().remote_image;
-            Log.d(TAG, "ModelFanPosts: imageField"+imageField);
-            if (jo.has(imageField) && !jo.isNull(imageField) && (jo.getJSONArray(imageField).length() > 0)) {
-                this.field_image = jo.getJSONArray(imageField).getJSONObject(0).getString("url");
-            }else if (jo.has(remoteImageField) && !jo.isNull(remoteImageField) && (jo.getJSONArray(remoteImageField).length() > 0)) {
-                this.field_image = jo.getJSONArray(remoteImageField).getJSONObject(0).getString("uri");
-            }
-            String remoteVideoField = NodeTypeObj.getFieldsList().remote_video;
-            if (jo.has(remoteVideoField) && !jo.isNull(remoteVideoField) && (jo.getJSONArray(remoteVideoField).length() > 0)) {
-                this.field_video = jo.getJSONArray(remoteVideoField).getJSONObject(0).getString("value");
-                if(this.field_video.contains("youtu.be")){
-                    String youtubeID = extractYTId(this.field_video);
-                    this.field_image = "https://i3.ytimg.com/vi/"+youtubeID+"/hqdefault.jpg";
+            if(this.isValidNodeType) {
+                String bodyField = MyApplication.gblGetBodyFieldName(node_type);
+                if (jo.has(bodyField) && !jo.isNull(bodyField) && (jo.getJSONArray(bodyField).length() > 0)) {
+                    this.body = jo.getJSONArray(bodyField).getJSONObject(0).getString("value");
                 }
-            }
-            String remotePageField = NodeTypeObj.getFieldsList().remote_page;
-            if (jo.has(remotePageField) && !jo.isNull(remotePageField) && (jo.getJSONArray(remotePageField).length() > 0)) {
-                this.field_remote_page = jo.getJSONArray(remotePageField).getJSONObject(0).getString("uri");
+                String imageField = MyApplication.gblGetImageFieldName(node_type);
+                String remoteImageField = NodeTypeObj.getFieldsList().remote_image;
+                Log.d(TAG, "ModelFanPosts: imageField" + imageField);
+                if (jo.has(imageField) && !jo.isNull(imageField) && (jo.getJSONArray(imageField).length() > 0)) {
+                    this.field_image = jo.getJSONArray(imageField).getJSONObject(0).getString("url");
+                } else if (jo.has(remoteImageField) && !jo.isNull(remoteImageField) && (jo.getJSONArray(remoteImageField).length() > 0)) {
+                    this.field_image = jo.getJSONArray(remoteImageField).getJSONObject(0).getString("uri");
+                }
+                String remoteVideoField = NodeTypeObj.getFieldsList().remote_video;
+                if (jo.has(remoteVideoField) && !jo.isNull(remoteVideoField) && (jo.getJSONArray(remoteVideoField).length() > 0)) {
+                    this.field_video = jo.getJSONArray(remoteVideoField).getJSONObject(0).getString("value");
+                    if (this.field_video.contains("youtu.be")) {
+                        String youtubeID = extractYTId(this.field_video);
+                        this.field_image = "https://i3.ytimg.com/vi/" + youtubeID + "/hqdefault.jpg";
+                    }
+                }
+                String remotePageField = NodeTypeObj.getFieldsList().remote_page;
+                if (jo.has(remotePageField) && !jo.isNull(remotePageField) && (jo.getJSONArray(remotePageField).length() > 0)) {
+                    this.field_remote_page = jo.getJSONArray(remotePageField).getJSONObject(0).getString("uri");
+                }
             }
         } catch (JSONException e) {
             e.printStackTrace();

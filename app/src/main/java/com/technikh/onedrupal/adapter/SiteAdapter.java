@@ -60,7 +60,7 @@ public class SiteAdapter extends RecyclerView.Adapter<SiteAdapter.EmployeeViewHo
     public void onBindViewHolder(EmployeeViewHolder holder, int position) {
         holder.txtEmpName.setText(dataList.get(position).getProtocol());
         holder.txtEmpEmail.setText(dataList.get(position).getDomain());
-        //holder.txtEmpPhone.setText(dataList.get(position).getPhone());
+        holder.txtEmpPhone.setText(dataList.get(position).getTitle());
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

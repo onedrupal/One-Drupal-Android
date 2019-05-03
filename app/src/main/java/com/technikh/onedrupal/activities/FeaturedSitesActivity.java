@@ -45,9 +45,9 @@ public class FeaturedSitesActivity extends AppCompatActivity {
         toolbar.setTitle("Featured Sites");
 
         ArrayList<Site> empDataList = new ArrayList<Site>();
-        empDataList.add(new Site("http://", "one-drupal-demo.technikh.com"));
-        empDataList.add(new Site("https://", "nikhil.dubbaka.com"));
-        empDataList.add(new Site("http://", "app.eschool2go.org"));
+        empDataList.add(new Site("http://", "one-drupal-demo.technikh.com", "Demo Site - Search & Filters"));
+        empDataList.add(new Site("https://", "content.dubbaka.com", "Nikhil Dubbaka Blog"));
+        empDataList.add(new Site("http://", "app.eschool2go.org", "Demo Site - Image gallery"));
         generateEmployeeList(empDataList);
 /*
         //Create handle for the RetrofitOneDrupalInstance interface

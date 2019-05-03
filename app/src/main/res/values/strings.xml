@@ -29,6 +29,7 @@
     <string name="et_remote_image">URL for External Image</string>
     <string name="et_remote_page">URL for External Page</string>
     <string name="et_remote_video">URL for External Video</string>
+    <string name="et_taxonomy_category">Tags</string>
 
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>

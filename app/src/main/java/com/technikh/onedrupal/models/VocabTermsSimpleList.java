@@ -10,13 +10,15 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
-public class settingTaxonomyField {
-    @SerializedName("field")
-    public String mFieldName="";
+public class VocabTermsSimpleList {
+    @SerializedName("results")
+    private ArrayList<VocabSimpleTerm> typesList;
 
-    @SerializedName("vocabulary")
-    public String mVocabulary="";
+    public ArrayList<VocabSimpleTerm> getTypesArrayList() {
+        return typesList;
+    }
 
-    @SerializedName("auto_create")
-    public boolean mAutoCreate=false;
+    public void setTypesArrayList(ArrayList<VocabSimpleTerm> siteArrayList) {
+        this.typesList = siteArrayList;
+    }
 }

@@ -11,40 +11,80 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.os.StrictMode;
 import android.provider.MediaStore;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.widget.Toolbar;
+
+import android.text.Editable;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.MultiAutoCompleteTextView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.android.volley.VolleyError;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.ml.vision.FirebaseVision;
+import com.google.firebase.ml.vision.common.FirebaseVisionImage;
+import com.google.firebase.ml.vision.text.FirebaseVisionText;
+import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
+import com.otaliastudios.autocomplete.Autocomplete;
+import com.otaliastudios.autocomplete.AutocompleteCallback;
+import com.otaliastudios.autocomplete.AutocompletePresenter;
+import com.otaliastudios.autocomplete.CharPolicy;
 import com.technikh.onedrupal.R;
+import com.technikh.onedrupal.adapter.AutoSuggestAdapter;
 import com.technikh.onedrupal.app.MyApplication;
 import com.technikh.onedrupal.authenticator.AuthPreferences;
 import com.technikh.onedrupal.helpers.PDUtils;
+import com.technikh.onedrupal.helpers.UserPresenter;
 import com.technikh.onedrupal.models.ImageUploadResponse;
 import com.technikh.onedrupal.models.ModelNodeType;
+import com.technikh.onedrupal.models.OneMultipleTermsItemModel;
+import com.technikh.onedrupal.models.OneMultipleTermsItemTermModel;
+import com.technikh.onedrupal.models.OneMultipleTermsModel;
 import com.technikh.onedrupal.models.SettingsType;
+import com.technikh.onedrupal.models.User;
+import com.technikh.onedrupal.models.VocabSimpleTerm;
+import com.technikh.onedrupal.models.VocabTermsSimpleList;
 import com.technikh.onedrupal.network.AddCookiesInterceptor;
+import com.technikh.onedrupal.network.ApiCall;
 import com.technikh.onedrupal.network.GetSiteDataService;
 import com.technikh.onedrupal.network.RetrofitSiteInstance;
 
@@ -56,6 +96,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import io.github.mthli.knife.KnifeText;
@@ -65,10 +109,14 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+//import com.android.volley.Response;
+
 public class ActivityPost extends ActivityBase implements View.OnClickListener {
 
     Toolbar toolbar;
     EditText et_f_post, et_remote_image_url, et_remote_page_url, et_remote_video_url;
+    MultiAutoCompleteTextView et_taxonomy_category_auto;
+    AutoCompleteTextView et_taxonomy_category_auto_sngle_categ;
     ImageView iv_f_post_preview;
     Button iv_f_post_image;
     //CheckBox cb_published, cb_promoted;
@@ -81,6 +129,13 @@ public class ActivityPost extends ActivityBase implements View.OnClickListener {
     private ImageUploadResponse imageUploadResponse;
     private static String TAG = "ActivityPost";
     private FirebaseAnalytics mFirebaseAnalytics;
+
+    private Autocomplete userAutocomplete;
+    private ArrayList<OneMultipleTermsItemModel> oneMultipleTermsItemsList;
+    private Handler autoCompleteHandler, autoCompleteSngleHandler;
+    private static final int TRIGGER_AUTO_COMPLETE = 100;
+    private static final long AUTO_COMPLETE_DELAY = 300;
+    private Bitmap glideBitmap;
 
 
     //private static final String BOLD = "<b>Write blog details here</b>";
@@ -98,12 +153,15 @@ public class ActivityPost extends ActivityBase implements View.OnClickListener {
     private String imageField = "";
     private String bodyField = "";
     private String remotePageField = "";
+    private String taxonomyField = "", taxonomyFieldSingleCategory = "", taxonomyFieldVocabulary = "", taxonomyFieldSnglCategVocab = "";
     private String remoteImageField = "";
     private String remoteVideoField = "";
     private boolean editMode = false;
     private String edit_nid = "";
 
     private AuthPreferences mAuthPreferences;
+
+    private AutoSuggestAdapter autoSuggestAdapter, autoSuggestSnglAdapter;
 
 
     @Override
@@ -112,10 +170,16 @@ public class ActivityPost extends ActivityBase implements View.OnClickListener {
         setContentView(R.layout.activity_post);
 
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        mAuthPreferences = new AuthPreferences(this);
 
+        autoSuggestAdapter = new AutoSuggestAdapter(this,
+                R.layout.row_autocomplete);
+        autoSuggestSnglAdapter = new AutoSuggestAdapter(this,
+                R.layout.row_autocomplete);
+
+        //fetchTaxonomyTermNames();
         init();
 
-        mAuthPreferences = new AuthPreferences(this);
         xCSRFToken = mAuthPreferences.getAuthToken();
 
         Bundle b = getIntent().getExtras();
@@ -123,16 +187,40 @@ public class ActivityPost extends ActivityBase implements View.OnClickListener {
             nodeType = b.getString("nodeType");
             editMode = b.getBoolean("editMode");
         }
-        if(nodeType!= null && !nodeType.isEmpty()){
+        if(nodeType!= null && !nodeType.isEmpty()) {
             SettingsType NodeTypeObj = MyApplication.gblGetNodeTypeObj(nodeType);
+            if (NodeTypeObj != null) {
 
-            imageField = MyApplication.gblGetImageFieldName(nodeType);
-            bodyField = MyApplication.gblGetBodyFieldName(nodeType);
-            remotePageField = NodeTypeObj.getFieldsList().remote_page;
-            remoteImageField = NodeTypeObj.getFieldsList().remote_image;
-            remoteVideoField = NodeTypeObj.getFieldsList().remote_video;
-            Log.d(TAG, "onCreate: bodyField "+bodyField+" nodeType "+nodeType);
+                imageField = MyApplication.gblGetImageFieldName(nodeType);
+                bodyField = MyApplication.gblGetBodyFieldName(nodeType);
+                remotePageField = NodeTypeObj.getFieldsList().remote_page;
+                if (NodeTypeObj.getFieldsList().taxonomies.size() > 0) {
+                    if (NodeTypeObj.getFieldsList().taxonomies.get(0).mAutoCreate) {
+                        // auto create: true -> Tags
+                        taxonomyField = NodeTypeObj.getFieldsList().taxonomies.get(0).mFieldName;
+                        taxonomyFieldVocabulary = NodeTypeObj.getFieldsList().taxonomies.get(0).mVocabulary;
+                    } else {
+                        taxonomyFieldSingleCategory = NodeTypeObj.getFieldsList().taxonomies.get(0).mFieldName;
+                        taxonomyFieldSnglCategVocab = NodeTypeObj.getFieldsList().taxonomies.get(0).mVocabulary;
+                    }
+                }
+                if (NodeTypeObj.getFieldsList().taxonomies.size() > 1) {
+                    if (taxonomyField.isEmpty()) {
+                        taxonomyField = NodeTypeObj.getFieldsList().taxonomies.get(1).mFieldName;
+                        taxonomyFieldVocabulary = NodeTypeObj.getFieldsList().taxonomies.get(1).mVocabulary;
+                    } else {
+                        taxonomyFieldSingleCategory = NodeTypeObj.getFieldsList().taxonomies.get(1).mFieldName;
+                        taxonomyFieldSnglCategVocab = NodeTypeObj.getFieldsList().taxonomies.get(1).mVocabulary;
+                    }
+                }
+                Log.d(TAG, "onCreate: taxonomyField" + taxonomyField);
+                Log.d(TAG, "onCreate: taxonomyFieldSingleCategory" + taxonomyFieldSingleCategory);
+                remoteImageField = NodeTypeObj.getFieldsList().remote_image;
+                remoteVideoField = NodeTypeObj.getFieldsList().remote_video;
+                Log.d(TAG, "onCreate: bodyField " + bodyField + " nodeType " + nodeType);
+            }
         }
+        setupTaxonomyFieldAutocomplete();
 
         if(imageField != null && !imageField.isEmpty()){
             iv_f_post_preview.setVisibility(View.VISIBLE);
@@ -147,6 +235,16 @@ public class ActivityPost extends ActivityBase implements View.OnClickListener {
         }
         if(remotePageField != null && !remotePageField.isEmpty()){
             et_remote_page_url.setVisibility(View.VISIBLE);
+        }
+        if(taxonomyField != null && !taxonomyField.isEmpty()){
+            et_taxonomy_category_auto.setVisibility(View.VISIBLE);
+        }
+        if(taxonomyFieldSingleCategory != null && !taxonomyFieldSingleCategory.isEmpty()){
+            et_taxonomy_category_auto_sngle_categ.setVisibility(View.VISIBLE);
+            et_taxonomy_category_auto_sngle_categ.setHint(taxonomyFieldSingleCategory);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                et_taxonomy_category_auto_sngle_categ.setTooltipText(taxonomyFieldSingleCategory);
+            }
         }
         if(remoteVideoField != null && !remoteVideoField.isEmpty()){
             et_remote_video_url.setVisibility(View.VISIBLE);
@@ -189,6 +287,7 @@ public class ActivityPost extends ActivityBase implements View.OnClickListener {
                         .into(iv_f_post_preview);
             }
             toolbar.setTitle("Edit "+nodeType);
+            et_taxonomy_category_auto.setText(b.getString("nTagsMulti"));
         }else{
             //knife.fromHtml(EXAMPLE);
             toolbar.setTitle("POST "+nodeType);
@@ -196,13 +295,28 @@ public class ActivityPost extends ActivityBase implements View.OnClickListener {
             if(b != null) {
                 String nodeRemotePage = b.getString("nRemotePage");
                 Log.d(TAG, "onCreate: nodeRemotePage "+nodeRemotePage);
+                String host = "";
                 if(nodeRemotePage != null && !nodeRemotePage.isEmpty()){
                     et_remote_page_url.setText(nodeRemotePage);
+                    try {
+                        URL url = new URL(nodeRemotePage);
+                        host = url.getHost()+", ";
+                        et_taxonomy_category_auto.setText(host);
+                    }catch(MalformedURLException e){
+                        e.printStackTrace();
+                    }
                     //et_remote_page_url.setVisibility(View.VISIBLE);
                 }
                 String nodeRemoteImage = b.getString("nRemoteImage");
                 if(nodeRemoteImage != null && !nodeRemoteImage.isEmpty()){
                     et_remote_image_url.setText(nodeRemoteImage);
+                    try {
+                        URL url = new URL(nodeRemoteImage);
+                        host = host + url.getHost()+", ";
+                        et_taxonomy_category_auto.setText(host);
+                    }catch(MalformedURLException e){
+                        e.printStackTrace();
+                    }
                     //et_remote_image_url.setVisibility(View.VISIBLE);
                 }
                 String nodeRemoteVideo = b.getString("nRemoteVideo");
@@ -215,7 +329,9 @@ public class ActivityPost extends ActivityBase implements View.OnClickListener {
                 }
                 String nodeBody = b.getString("nBody");
                 if(nodeBody != null && !nodeBody.isEmpty()){
-                    Log.d(TAG, "onCreate: setting body to "+ nodeBody);
+                    Log.d(TAG, "onCreate: setting body1 to "+ nodeBody);
+                    nodeBody = nodeBody.replaceAll("\\\\n", "<br>");
+                    Log.d(TAG, "onCreate: setting body2 to "+ nodeBody);
                     knife.fromHtml(nodeBody);
                 }
                 String nImage = b.getString("nImage");
@@ -227,9 +343,58 @@ public class ActivityPost extends ActivityBase implements View.OnClickListener {
                     Glide.with(context)
                             .load(uriData)
                             .into(iv_f_post_preview);
+                }else if(nodeRemoteImage != null && !nodeRemoteImage.isEmpty()){
+                    Glide.with(context)
+                            .asBitmap()
+                            .load(nodeRemoteImage)
+                            .into(new CustomTarget<Bitmap>() {
+                                @Override
+                                public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                                    iv_f_post_preview.setImageBitmap(resource);
+                                    glideBitmap = resource;
+                                    postImageTextBodyAppend();
+                                }
+
+                                @Override
+                                public void onLoadCleared(@Nullable Drawable placeholder) {
+                                }
+                            });
                 }
+
             }
         }
+    }
+
+    private void postImageTextBodyAppend() {
+        if(glideBitmap == null){
+            return;
+        }
+        FirebaseVisionImage visionImage = FirebaseVisionImage.fromBitmap(glideBitmap);
+
+        FirebaseVisionTextRecognizer visionDetector = FirebaseVision.getInstance()
+                .getOnDeviceTextRecognizer();
+        Log.d(TAG, "postImageTextBodyAppend: visionDetector ");
+        Task<FirebaseVisionText> result =
+                visionDetector.processImage(visionImage)
+                        .addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
+                            @Override
+                            public void onSuccess(FirebaseVisionText firebaseVisionText) {
+                                Log.d(TAG, "visionDetector onSuccess: " + firebaseVisionText.getText());
+                                if(!firebaseVisionText.getText().isEmpty()) {
+                                    String origBody = knife.toHtml();
+                                    knife.fromHtml(origBody + "<br /><br />"+firebaseVisionText.getText());
+                                }
+                            }
+                        })
+                        .addOnFailureListener(
+                                new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        // Task failed with an exception
+                                        // ...
+                                        Log.d(TAG, "visionDetector onFailure: "+e.getMessage());
+                                    }
+                                });
     }
 
     private void init() {
@@ -256,7 +421,7 @@ public class ActivityPost extends ActivityBase implements View.OnClickListener {
         //cb_promoted = findViewById(R.id.checkBoxPromoted);
         ll_f_post_publish = findViewById(R.id.ll_f_post_publish);
         ll_f_post_publish.setOnClickListener(this);
-
+        //setupUserAutocomplete();
     }
 
     private void showFileChooser() {
@@ -471,9 +636,286 @@ public class ActivityPost extends ActivityBase implements View.OnClickListener {
                         REQUEST_CODE_CROP_ACTIVITY_PROFILE);
                 break;
             case R.id.ll_f_post_publish:
-                makeBlogPost();
+                if(taxonomyField != null && !taxonomyField.isEmpty() && !et_taxonomy_category_auto.getText().toString().isEmpty()) {
+                    postMultipleTaxonomyTermsCreation();
+                }else {
+                    makeBlogPost();
+                }
+                //makeBlogPost();
                 break;
         }
+    }
+
+    private void postMultipleTaxonomyTermsCreation(){
+        _progressDialogAsync.show();
+        //Log.d(TAG, "drupalNodeEditProperty: "+nid);
+        GetSiteDataService service = RetrofitSiteInstance.getRetrofitSiteInstance(mAuthPreferences.getPrimarySiteProtocol(), mAuthPreferences.getPrimarySiteUrl(), null).create(GetSiteDataService.class);
+        //Call the method with parameter in the interface to get the employee data
+        OneMultipleTermsModel termsModelObj = new OneMultipleTermsModel();
+
+        if(!taxonomyField.isEmpty() && !et_taxonomy_category_auto.getText().toString().isEmpty()) {
+            Log.d(TAG, "postMultipleTaxonomyTermsCreation: taxonomyField");
+            OneMultipleTermsItemModel termsItemModelObj = new OneMultipleTermsItemModel();
+            termsItemModelObj.field_name = taxonomyField;
+            termsItemModelObj.tags = et_taxonomy_category_auto.getText().toString();
+            termsItemModelObj.vid = taxonomyFieldVocabulary;
+
+            //OneMultipleTermsItemTermModel termsItemTermModelObj = new OneMultipleTermsItemTermModel();
+            termsModelObj.items = new ArrayList<OneMultipleTermsItemModel>();
+            termsModelObj.items.add(termsItemModelObj);
+        }
+
+        if(!taxonomyFieldSingleCategory.isEmpty() && !et_taxonomy_category_auto_sngle_categ.getText().toString().isEmpty()) {
+            Log.d(TAG, "postMultipleTaxonomyTermsCreation: taxonomyFieldSingleCategory");
+            OneMultipleTermsItemModel termsItemModelObj = new OneMultipleTermsItemModel();
+            termsItemModelObj.field_name = taxonomyFieldSingleCategory;
+            termsItemModelObj.tags = et_taxonomy_category_auto_sngle_categ.getText().toString();
+            termsItemModelObj.vid = taxonomyFieldSnglCategVocab;
+
+            //OneMultipleTermsItemTermModel termsItemTermModelObj = new OneMultipleTermsItemTermModel();
+            if(termsModelObj.items == null || termsModelObj.items.isEmpty()) {
+                termsModelObj.items = new ArrayList<OneMultipleTermsItemModel>();
+            }
+            termsModelObj.items.add(termsItemModelObj);
+        }
+        retrofit2.Call<OneMultipleTermsModel> call = service.postMultipleTerms(termsModelObj);
+
+        Log.d("URL Called", call.request().url() + "");
+        call.enqueue(new retrofit2.Callback<OneMultipleTermsModel>() {
+            @Override
+            public void onResponse(retrofit2.Call<OneMultipleTermsModel> call, retrofit2.Response<OneMultipleTermsModel> response) {
+                if(response.isSuccessful()) {
+                    _progressDialogAsync.cancel();
+
+                    Log.d(TAG, "onResponse: isSuccessful "+response.body().toString());
+                    oneMultipleTermsItemsList = response.body().items;
+                    makeBlogPost();
+
+                }else {
+                    _progressDialogAsync.cancel();
+                    Log.d(TAG, "onResponse: " + response.toString());
+                    Log.d(TAG, "onResponse: call body" + call.request().body().toString());
+                    new AlertDialog.Builder(ActivityPost.this)
+                            .setTitle(getString(R.string.dialog_api_failed_title))
+                            .setMessage(getString(R.string.dialog_api_failed_message_prefix) + response.toString())
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .show();
+                }
+            }
+
+            @Override
+            public void onFailure(retrofit2.Call<OneMultipleTermsModel> call, Throwable t) {
+                _progressDialogAsync.cancel();
+                Log.d(TAG, "onFailure: "+t.getMessage());
+                new AlertDialog.Builder(ActivityPost.this)
+                        .setTitle(getString(R.string.dialog_api_failed_title))
+                        .setMessage(getString(R.string.dialog_api_failed_message_prefix)+t.getMessage())
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
+                //Toast.makeText(MyApplication.getAppContext(), "Something went wrong...Please try later!", Toast.LENGTH_SHORT).show();
+            }
+        });
+        _progressDialogAsync.cancel();
+    }
+
+    private void fetchTaxonomyTermNames() {
+//Create handle for the getRetrofitSiteInstance interface
+        GetSiteDataService service = RetrofitSiteInstance.getRetrofitSiteInstance(mAuthPreferences.getPrimarySiteProtocol(), mAuthPreferences.getPrimarySiteUrl(), null).create(GetSiteDataService.class);
+        //Call the method with parameter in the interface to get the employee data
+        retrofit2.Call<VocabTermsSimpleList> call = service.getTaxonomyVocabTitles();
+        Log.d(TAG, "requestTaxonomyApiFilters "+call.request().url() + "");
+        call.enqueue(new retrofit2.Callback<VocabTermsSimpleList>() {
+            @Override
+            public void onResponse(retrofit2.Call<VocabTermsSimpleList> call, retrofit2.Response<VocabTermsSimpleList> response) {
+                if (response.isSuccessful()) {
+                    ArrayList<VocabSimpleTerm> vocabTermsList = response.body().getTypesArrayList();
+                    for (int j = 0; j < vocabTermsList.size(); j++) {
+                        VocabSimpleTerm vTerm = vocabTermsList.get(j);
+                    }
+                } else {
+                    Log.d(TAG, "fetchTaxonomyTermNames onResponse: fail "+response.errorBody().toString());
+                }
+            }
+            @Override
+            public void onFailure(retrofit2.Call<VocabTermsSimpleList> call, Throwable t) {
+                Log.d(TAG, "onFailure: "+t.getMessage());
+                //Toast.makeText(MyApplication.getAppContext(), "Something went wrong...Please try later!", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void setupTaxonomyFieldAutocomplete() {
+        // http://nikhil.dubbaka.com/onedrupal/api/v1/vocabulary-titles/categories?_format=json
+        //String[] androidVersionNames = {"Aestro", "Blender", "CupCake", "Donut", "Eclair", "Froyo", "Ginger bread", "Honey Comb", "IceCream Sandwich", "Jelli bean", "Kitkat", "Lollipop", "MarshMallow"};
+
+// initiate a MultiAutoCompleteTextView
+        et_taxonomy_category_auto = (MultiAutoCompleteTextView) findViewById(R.id.et_taxonomy_category_auto);
+        et_taxonomy_category_auto_sngle_categ = (AutoCompleteTextView) findViewById(R.id.et_taxonomy_category_auto_sngle_categ);
+        if(!taxonomyFieldSingleCategory.isEmpty()) {
+            et_taxonomy_category_auto_sngle_categ.setAdapter(autoSuggestSnglAdapter);
+            et_taxonomy_category_auto_sngle_categ.setThreshold(1);
+            //et_taxonomy_category_auto_sngle_categ.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
+            et_taxonomy_category_auto_sngle_categ.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int
+                        count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before,
+                                          int count) {
+                    autoCompleteSngleHandler.removeMessages(TRIGGER_AUTO_COMPLETE);
+                    autoCompleteSngleHandler.sendEmptyMessageDelayed(TRIGGER_AUTO_COMPLETE,
+                            AUTO_COMPLETE_DELAY);
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+
+                }
+            });
+
+            autoCompleteSngleHandler = new Handler(new Handler.Callback() {
+                @Override
+                public boolean handleMessage(Message msg) {
+                    if (msg.what == TRIGGER_AUTO_COMPLETE) {
+                        if (!TextUtils.isEmpty(et_taxonomy_category_auto_sngle_categ.getText())) {
+                            String intermediate_text=et_taxonomy_category_auto_sngle_categ.getText().toString();
+                            String final_string=intermediate_text.substring(intermediate_text.lastIndexOf(",")+1);
+                            Log.d(TAG, "autoCompleteSngleHandler handleMessage: full text "+intermediate_text);
+                            Log.d(TAG, "handleMessage: coma text "+final_string);
+                            makeApiCall(taxonomyFieldSnglCategVocab, final_string);
+                        }
+                    }
+                    return false;
+                }
+            });
+        }
+        if(!taxonomyField.isEmpty()) {
+// set adapter to fill the data in suggestion list
+            //ArrayAdapter<String> versionNames = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, androidVersionNames);
+            //et_taxonomy_category_auto.setAdapter(versionNames);
+
+
+            et_taxonomy_category_auto.setAdapter(autoSuggestAdapter);
+
+// set threshold value 1 that help us to start the searching from first character
+            et_taxonomy_category_auto.setThreshold(1);
+// set tokenizer that distinguish the various substrings by comma
+            et_taxonomy_category_auto.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
+
+            et_taxonomy_category_auto.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int
+                        count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before,
+                                          int count) {
+                    autoCompleteHandler.removeMessages(TRIGGER_AUTO_COMPLETE);
+                    autoCompleteHandler.sendEmptyMessageDelayed(TRIGGER_AUTO_COMPLETE,
+                            AUTO_COMPLETE_DELAY);
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+
+                }
+            });
+
+            autoCompleteHandler = new Handler(new Handler.Callback() {
+                @Override
+                public boolean handleMessage(Message msg) {
+                    if (msg.what == TRIGGER_AUTO_COMPLETE) {
+                        if (!TextUtils.isEmpty(et_taxonomy_category_auto.getText())) {
+                            String intermediate_text = et_taxonomy_category_auto.getText().toString();
+                            String final_string = intermediate_text.substring(intermediate_text.lastIndexOf(",") + 1);
+                            Log.d(TAG, "autoCompleteHandler handleMessage: full text " + intermediate_text);
+                            Log.d(TAG, "handleMessage: coma text " + final_string);
+                            makeApiCall(taxonomyFieldVocabulary, final_string);
+                        }
+                    }
+                    return false;
+                }
+            });
+        }
+
+
+    }
+
+    private void makeApiCall(String vid, String text) {
+        text = text.trim();
+        if(text.length() <= 2){
+            return;
+        }
+        ApiCall.make(this, vid, text, new com.android.volley.Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                //parsing logic, please change it as per your requirement
+                List<OneMultipleTermsItemTermModel> stringList = new ArrayList<>();
+                try {
+                    JSONObject responseObject = new JSONObject(response);
+                    JSONArray array = responseObject.getJSONArray("results");
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject row = array.getJSONObject(i);
+                        OneMultipleTermsItemTermModel oneMultipleTermsItemTerm = new OneMultipleTermsItemTermModel();
+                        Log.d(TAG, "onResponse: row.getString(name) "+row.getString("name"));
+                        oneMultipleTermsItemTerm.name = row.getString("name");
+                        oneMultipleTermsItemTerm.parent = row.getString("parent");
+                        stringList.add(oneMultipleTermsItemTerm);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                if(stringList.size() >= 1) {
+                    if (vid.equals(taxonomyFieldVocabulary)) {
+                        //IMPORTANT: set data here and notify
+                        autoSuggestAdapter.setData(stringList);
+                        autoSuggestAdapter.notifyDataSetChanged();
+                    } else if (vid.equals(taxonomyFieldSnglCategVocab)) {
+                        Log.d(TAG, "onResponse: autoSuggestSnglAdapter notifyDataSetChanged");
+                        autoSuggestSnglAdapter.setData(stringList);
+                        autoSuggestSnglAdapter.notifyDataSetChanged();
+                    }
+                }
+            }
+        }, new com.android.volley.Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d(TAG, "onErrorResponse: "+error.getMessage());
+            }
+        });
+    }
+
+    private void setupUserAutocomplete() {
+        //EditText edit = (EditText) findViewById(R.id.single);
+        float elevation = 6f;
+        Drawable backgroundDrawable = new ColorDrawable(Color.WHITE);
+        AutocompletePresenter<User> presenter = new UserPresenter(context);
+        AutocompleteCallback<User> callback = new AutocompleteCallback<User>() {
+            @Override
+            public boolean onPopupItemClicked(Editable editable, User item) {
+                editable.clear();
+                editable.append(item.getFullname());
+                editable.setSpan(new StyleSpan(Typeface.BOLD), 0, item.getFullname().length(),
+                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                return true;
+            }
+
+            public void onPopupVisibilityChanged(boolean shown) {}
+        };
+
+        userAutocomplete = Autocomplete.<User>on(et_taxonomy_category_auto)
+                .with(elevation)
+                .with(new CharPolicy(','))
+                .with(backgroundDrawable)
+                .with(presenter)
+                .with(callback)
+                .build();
+        //userAutocomplete.showPopup(" ");
     }
 
     private void makeBlogPost() {
@@ -564,6 +1006,33 @@ options: [ ]
                 remotePageArray.put(remotePageObject);
                 jsonParams.put(remoteVideoField, remotePageArray);
             }
+/*
+[
+{
+target_id: 10,
+target_type: "taxonomy_term",
+target_uuid: "7fc47cbf-ecef-4fca-b2b6-a749fa5840d2",
+url: "/taxonomy/term/10"
+},
+ */
+if(oneMultipleTermsItemsList != null) {
+    for (int i = 0; i < oneMultipleTermsItemsList.size(); i++) {
+        OneMultipleTermsItemModel oneMultipleTermsItem = oneMultipleTermsItemsList.get(i);
+        JSONArray remotePageArray = new JSONArray();
+        for (int j = 0; j < oneMultipleTermsItem.terms.size(); j++) {
+            OneMultipleTermsItemTermModel oneMultipleTermsItemTerm = oneMultipleTermsItem.terms.get(j);
+            JSONObject remotePageObject = new JSONObject();
+            remotePageObject.put("target_id", oneMultipleTermsItemTerm.tid);
+            remotePageObject.put("target_type", "taxonomy_term");
+            remotePageArray.put(remotePageObject);
+        }
+        Log.d(TAG, "taxonomyField remotePageArray " + remotePageArray.toString(4));
+        if(remotePageArray.length() > 0) {
+            jsonParams.put(oneMultipleTermsItem.field_name, remotePageArray);
+        }
+        //break;
+    }
+}
 
             //Published input
             /*

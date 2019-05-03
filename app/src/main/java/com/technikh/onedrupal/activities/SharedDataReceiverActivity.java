@@ -7,6 +7,7 @@ package com.technikh.onedrupal.activities;
  */
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -27,6 +28,7 @@ import com.technikh.onedrupal.R;
 import com.technikh.onedrupal.app.MyApplication;
 import com.technikh.onedrupal.models.SettingsType;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -98,13 +100,15 @@ public class SharedDataReceiverActivity extends AppCompatActivity {
         String linkAndText ="";
         for (String key : extras.keySet()) {
             try {
-                String extraValue = extras.getString(key);
+                Object extraValue = extras.get(key);
                 Log.d(TAG, "extras key " + key + " value: " + extraValue);
-                if (extraValue.contains("http")) {
-                    linkAndText = extraValue;
-                } else {
-                    if (key.equals("android.intent.extra.SUBJECT")) {
-                        nodeTitle = extraValue;
+                if (extraValue instanceof String) {
+                    if (extraValue != null && extraValue.toString().contains("http")) {
+                        linkAndText = extraValue.toString();
+                    } else {
+                        if (key.equals("android.intent.extra.SUBJECT")) {
+                            nodeTitle = extraValue.toString();
+                        }
                     }
                 }
             }catch (Exception e){
@@ -135,13 +139,32 @@ public class SharedDataReceiverActivity extends AppCompatActivity {
             Log.d(TAG, "processNodeType: nodeTitle "+nodeTitle);
         }
         if(link != null && !link.isEmpty()){
+            ProgressDialog pd = new ProgressDialog(SharedDataReceiverActivity.this);
+            pd.setMessage("Intelligently fetching meta data like title, description, image... for the post!");
+            pd.show();
             Log.d(TAG, "onClick: postTitle "+nodeTitle);
             nRemotePage = link;
             WebView webView = findViewById(R.id.shared_intent_webview);
             webView.getSettings().setJavaScriptEnabled(true);
             webView.getSettings().setLoadsImagesAutomatically(false);
             webView.getSettings().setBlockNetworkImage(true);
+
+            webView.getSettings().setLoadWithOverviewMode(true);
+            webView.getSettings().setUseWideViewPort(true);
+            webView.getSettings().setSupportZoom(true);
+            webView.getSettings().setBuiltInZoomControls(true);
+            webView.getSettings().setDisplayZoomControls(false);
+            webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
+            webView.setScrollbarFadingEnabled(false);
+            String ua = webView.getSettings().getUserAgentString();
+            String androidOSString = webView.getSettings().getUserAgentString().substring(ua.indexOf("("), ua.indexOf(")") + 1);
+            String newUserAgent = webView.getSettings().getUserAgentString().replace(androidOSString, "(X11; Linux x86_64)");
+            //String newUA= "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.4) Gecko/20100101 Firefox/4.0";
+            webView.getSettings().setUserAgentString(newUserAgent);
+
             //webView.getSettings().setBlockNetworkLoads (true);
+            Log.d(TAG, "111 processNodeType: webView.loadUrl(link) "+link);
+            Log.d(TAG, "111 processNodeType: Uri.parse (link) "+Uri.parse(link));
             webView.loadUrl(link);
 
             //webView.addJavascriptInterface(new JsInterface(), "CC_FUND");
@@ -152,20 +175,38 @@ public class SharedDataReceiverActivity extends AppCompatActivity {
 
                     isRedirected = false;
                     super.onPageStarted(view, url, favicon);
-                }
-                /*@Override
+                }/*
+                @Override
                 public boolean shouldOverrideUrlLoading(WebView view, String url){
                     // do your handling codes here, which url is the requested url
                     // probably you need to open that url rather than redirect:
+                    Log.d(TAG, "111 shouldOverrideUrlLoading: url "+url);
                     view.loadUrl(url);
                     isRedirected = true;
                     return false; // then it is not handled by default action
                 }*/
                 @Override
                 public void onPageFinished(WebView view, String url) {
-                    Log.d(TAG, "onPageFinished: "+url);
+                    Log.d(TAG, "111 onPageFinished: url "+url);
+                    if (url.startsWith("intent")) {
+// https://www.zidsworld.com/android-development/how-to-fix-unknown-url-scheme-in-android-webview/
+
+                        try {
+                            Intent intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME);
+
+                            String fallbackUrl = intent.getStringExtra("browser_fallback_url");
+                            Log.d(TAG, "111 onPageFinished: fallbackUrl "+fallbackUrl);
+                            if (fallbackUrl != null) {
+                                view.loadUrl(fallbackUrl);
+                                return;
+                            }
+                        } catch (URISyntaxException e) {
+                            //not an intent uri
+                            Log.d(TAG, "onPageFinished: URISyntaxException "+e.getMessage());
+                        }
+                    }
                     if (!isRedirected) {
-                        Log.d(TAG, "onPageFinished: not isRedirected "+url);
+                        Log.d(TAG, "111 onPageFinished: not isRedirected "+url);
                     }
                     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                         Log.d(TAG, "onClick: evaluateJavascript");
@@ -187,20 +228,39 @@ public class SharedDataReceiverActivity extends AppCompatActivity {
 
                                     }
                                 });
+                        // <meta content="http://www.quickmeme.com/img/80/8084330f93a02be5098d2c6d1c5021914b2be71d71325a2c12b0e3af1c9d48df.jpg" itemprop="image">
+                        // itemprop="image"
                         javaScriptCode = "(function() { return (document.querySelector('meta[property~=\"og:image\"]').content); })();";
-                        Log.d(TAG, "onPageFinished: "+javaScriptCode);
+                        Log.d(TAG, "og:image onPageFinished: "+javaScriptCode);
                         view.evaluateJavascript(
                                 javaScriptCode,
                                 new ValueCallback<String>() {
                                     @Override
                                     public void onReceiveValue(final String html) {
-                                        Log.d(TAG, "onReceiveValue: "+html);
+                                        Log.d(TAG, "og:image onReceiveValue: "+html);
                                         if(html != null && !html.isEmpty() && html.length() >= 5) {
                                             nRemoteImage = html.replaceAll("^\"|\"$", "");
                                         }
                                         // TODO: if null, take page screenshots -> https://stackoverflow.com/questions/9745988/how-can-i-programmatically-take-a-screenshot-of-a-webview-capturing-the-full-pa
                                     }
                                 });
+
+                        if(nodeTitle == null || nodeTitle.isEmpty()) {
+                            javaScriptCode = "(function() { return (document.querySelector('meta[property~=\"og:title\"]').content); })();";
+                            Log.d(TAG, "og:title onPageFinished: "+javaScriptCode);
+                            view.evaluateJavascript(
+                                    javaScriptCode,
+                                    new ValueCallback<String>() {
+                                        @Override
+                                        public void onReceiveValue(final String html) {
+                                            Log.d(TAG, "og:title onReceiveValue: "+html);
+                                            if(html != null && !html.isEmpty() && html.length() >= 5) {
+                                                nodeTitle = html.replaceAll("^\"|\"$", "");
+                                            }
+                                        }
+                                    });
+                        }
+
                         Handler handler = new Handler();
                         handler.postDelayed(new Runnable() {
                             @Override
@@ -210,6 +270,7 @@ public class SharedDataReceiverActivity extends AppCompatActivity {
                                 }catch (Exception e){
                                     e.printStackTrace();
                                 }
+                                pd.dismiss();
                             }
                         }, 2000);
 

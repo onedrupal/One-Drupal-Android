@@ -68,7 +68,7 @@ public class ActivityFanPostDetails extends ActivityBase implements BreadcumAdap
     ScrollView sv_main;
     String response_error = "";
     String nid = "";
-    private String nImageURL = "";
+    private String nImageURL = "", nTagsMulti ="";
     private String nID = "";
     private String nodeType = "";
     private AuthPreferences mAuthPreferences;
@@ -121,7 +121,7 @@ public class ActivityFanPostDetails extends ActivityBase implements BreadcumAdap
         String site_protocol = getIntent().getStringExtra("SiteProtocol");
         requestNewsList(nid, site_protocol, site_domain);
 
-        initBreadcum();
+        //initBreadcum();
     }
 
     public void initBreadcum(){
@@ -293,6 +293,7 @@ public class ActivityFanPostDetails extends ActivityBase implements BreadcumAdap
         b.putString("nTitle", tv_a_fan_post_details_title.getText().toString());
         b.putString("nBody", tv_a_fan_post_details_body.getText().toString());
         b.putString("nImage", nImageURL);
+        b.putString("nTagsMulti", nTagsMulti);
         b.putString("nID", nID);
         b.putString("nodeType", nodeType);
 
@@ -472,6 +473,7 @@ public class ActivityFanPostDetails extends ActivityBase implements BreadcumAdap
                             tv_a_fan_post_details_body.setText(Html.fromHtml(modelFanPosts.getBody()));
                             tv_a_fan_post_details_category.setText(modelFanPosts.getField_text_category());
                             nImageURL = modelFanPosts.getField_image();
+                            //nTagsMulti = modelFanPosts.
                             nID = modelFanPosts.getNid();
                             nodeType = modelFanPosts.getNodeType();
                             Glide.with(context)

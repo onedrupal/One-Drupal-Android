@@ -25,10 +25,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <androidx.viewpager.widget.ViewPager
+            <com.bogdwellers.pinchtozoom.view.ImageViewPager
                 android:id="@+id/viewPager"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"></androidx.viewpager.widget.ViewPager>
+                android:layout_height="wrap_content"></com.bogdwellers.pinchtozoom.view.ImageViewPager>
 
             <ImageView
                 android:id="@+id/ivLeft"

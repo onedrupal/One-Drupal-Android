@@ -9,9 +9,11 @@ package com.technikh.onedrupal.network;
 import android.database.Observable;
 
 import com.technikh.onedrupal.models.ModelNodeType;
+import com.technikh.onedrupal.models.OneMultipleTermsModel;
 import com.technikh.onedrupal.models.SettingsTypeList;
 import com.technikh.onedrupal.models.SiteList;
 import com.technikh.onedrupal.models.VocabTermsList;
+import com.technikh.onedrupal.models.VocabTermsSimpleList;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -35,4 +37,11 @@ public interface GetSiteDataService {
 
     @GET("/onedrupal/api/v1/vocabulary/{vocabName}")
     Call<VocabTermsList> getTaxonomyVocab(@Path("vocabName") String vocabName);
+
+    @GET("/onedrupal/api/v1/vocabulary-titles?_format=json")
+    Call<VocabTermsSimpleList> getTaxonomyVocabTitles();
+
+    @Headers({"Content-Type:application/json"})
+    @POST("/onedrupal/api/v1/taxonomy")
+    Call<OneMultipleTermsModel> postMultipleTerms(@Body OneMultipleTermsModel body);
 }

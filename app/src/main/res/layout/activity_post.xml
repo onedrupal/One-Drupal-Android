@@ -281,6 +281,40 @@
                     app:fontFamily="@font/sf_regular"
                     tools:text="@string/et_remote_video" />
             </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+                <AutoCompleteTextView
+                    android:id="@+id/et_taxonomy_category_auto_sngle_categ"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#0f0"
+                    android:visibility="gone"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:textColor="#f00"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+            <MultiAutoCompleteTextView
+                android:id="@+id/et_taxonomy_category_auto"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:background="#0f0"
+                android:gravity="center"
+                android:hint="@string/et_taxonomy_category"
+                android:padding="10dp"
+                android:textColor="#f00"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                tools:text="@string/et_taxonomy_category"/>
+            </com.google.android.material.textfield.TextInputLayout>
           <!--  <CheckBox
                 android:id="@+id/checkBoxPublished"
                 android:layout_width="match_parent"
