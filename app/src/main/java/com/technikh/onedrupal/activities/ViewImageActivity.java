@@ -189,6 +189,8 @@ public class ViewImageActivity extends AppCompatActivity {
                         public void onLongPress(MotionEvent e) {
                             int touchX = (int)event.getX();
                             int touchY = (int)event.getY();
+                            Log.d(TAG1, "onTouch:  getX    X: "+e.getX()+" Y: "+e.getY()+" event X: "+event.getX()+" Y: "+event.getY());
+                            Log.d(TAG1, "onTouch:  getRawX X: "+e.getRawX()+" Y: "+e.getRawY()+" event X: "+event.getRawX()+" Y: "+event.getRawY());
                             //Log.e(TAG1, "Longpress detected event "+event.getAction()+" e "+e.getAction());
                             if(event.getAction() == MotionEvent.ACTION_UP) {
                                 Log.d(TAG1, "onLongPress: MotionEvent.ACTION_UP visionTextRectangles size "+visionTextRectangles.size());

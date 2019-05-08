@@ -68,7 +68,7 @@ public class ActivityFanPostDetails extends ActivityBase implements BreadcumAdap
     ScrollView sv_main;
     String response_error = "";
     String nid = "";
-    private String nImageURL = "", nTagsMulti ="";
+    private String nVideo_url = "", nRemote_page_url = "", nImageURL = "", nTagsMulti ="", nTagsMultiFieldName = "", nTagsMultiSecondFieldName = "", nTagsMultiSecond = "";
     private String nID = "";
     private String nodeType = "";
     private AuthPreferences mAuthPreferences;
@@ -293,7 +293,14 @@ public class ActivityFanPostDetails extends ActivityBase implements BreadcumAdap
         b.putString("nTitle", tv_a_fan_post_details_title.getText().toString());
         b.putString("nBody", tv_a_fan_post_details_body.getText().toString());
         b.putString("nImage", nImageURL);
+        b.putString("nRemoteVideo", nVideo_url);
+        b.putString("nRemote_page_url", nRemote_page_url);
+
         b.putString("nTagsMulti", nTagsMulti);
+        b.putString("nTagsMultiFieldName", nTagsMultiFieldName);
+        b.putString("nTagsMultiSecond", nTagsMultiSecond);
+        b.putString("nTagsMultiSecondFieldName", nTagsMultiSecondFieldName);
+
         b.putString("nID", nID);
         b.putString("nodeType", nodeType);
 
@@ -473,35 +480,38 @@ public class ActivityFanPostDetails extends ActivityBase implements BreadcumAdap
                             tv_a_fan_post_details_body.setText(Html.fromHtml(modelFanPosts.getBody()));
                             tv_a_fan_post_details_category.setText(modelFanPosts.getField_text_category());
                             nImageURL = modelFanPosts.getField_image();
-                            //nTagsMulti = modelFanPosts.
+                            nTagsMulti = modelFanPosts.get_first_tref_field_values();
+                            nTagsMultiFieldName = modelFanPosts.get_first_tref_field_name();
+                            nTagsMultiSecond = modelFanPosts.get_second_tref_field_values();
+                            nTagsMultiSecondFieldName = modelFanPosts.get_second_tref_field_name();
                             nID = modelFanPosts.getNid();
                             nodeType = modelFanPosts.getNodeType();
                             Glide.with(context)
                                     .load(modelFanPosts.getField_image())
                                     .into(iv_a_fan_post_details_image);
-                            String video_url = modelFanPosts.field_video;
-                            if (!video_url.isEmpty()) {
+                            nVideo_url = modelFanPosts.field_video;
+                            if (!nVideo_url.isEmpty()) {
                                 tv_row_read_more.setVisibility(View.VISIBLE);
                                 tv_row_read_more.setText("Watch Video...");
                                 tv_row_read_more.setOnClickListener(new View.OnClickListener() {
 
                                     public void onClick(View v) {
                                         Intent i = new Intent(Intent.ACTION_VIEW);
-                                        i.setData(Uri.parse(video_url));
+                                        i.setData(Uri.parse(nVideo_url));
                                         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                         startActivity(i);
                                     }
                                 });
                             }
-                            String remote_page_url = modelFanPosts.field_remote_page;
-                            if (!remote_page_url.isEmpty()) {
+                            nRemote_page_url = modelFanPosts.field_remote_page;
+                            if (!nRemote_page_url.isEmpty()) {
                                 tv_row_read_more.setVisibility(View.VISIBLE);
                                 tv_row_read_more.setText("Read More...");
                                 tv_row_read_more.setOnClickListener(new View.OnClickListener() {
 
                                     public void onClick(View v) {
                                         Intent i = new Intent(Intent.ACTION_VIEW);
-                                        i.setData(Uri.parse(remote_page_url));
+                                        i.setData(Uri.parse(nRemote_page_url));
                                         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                         startActivity(i);
                                     }

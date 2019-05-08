@@ -13,12 +13,16 @@ import android.util.Log;
 import com.google.gson.annotations.SerializedName;
 import com.technikh.onedrupal.app.MyApplication;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.technikh.onedrupal.util.StringUtils.implode;
 
 public class ModelFanPosts implements Parcelable {
 
@@ -27,7 +31,7 @@ public class ModelFanPosts implements Parcelable {
     private String body="";
     private String node_type="";
     private String field_image="";
-    public String field_video="", field_remote_page="";
+    public String field_video="", field_remote_page="", first_tref_field_name = "", first_tref_field_values = "", second_tref_field_name = "", second_tref_field_values = "";
     private String field_video_thumbnail="";
     private String field_text_category="";
     private boolean isValidNodeType = false;
@@ -74,6 +78,43 @@ public class ModelFanPosts implements Parcelable {
                         this.field_image = "https://i3.ytimg.com/vi/" + youtubeID + "/hqdefault.jpg";
                     }
                 }
+
+                if(NodeTypeObj.getFieldsList().taxonomies != null && NodeTypeObj.getFieldsList().taxonomies.size() > 0) {
+                    String lcl_first_tref_field_name = NodeTypeObj.getFieldsList().taxonomies.get(0).mFieldName;
+                    if (jo.has(lcl_first_tref_field_name) && !jo.isNull(lcl_first_tref_field_name) && (jo.getJSONArray(lcl_first_tref_field_name).length() > 0)) {
+                        JSONArray lcl_tref_array = jo.getJSONArray(lcl_first_tref_field_name);
+                        List<String> lcl_tname_array = new ArrayList<String>();
+                        for (int j = 0; j < lcl_tref_array.length(); j++) {
+                            if (lcl_tref_array.getJSONObject(j).has("name") && !lcl_tref_array.getJSONObject(j).isNull("name") && !lcl_tref_array.getJSONObject(j).getString("name").isEmpty()) {
+                                lcl_tname_array.add(lcl_tref_array.getJSONObject(j).getString("name"));
+                            }
+                        }
+                        if (lcl_tname_array.size() > 0) {
+                            this.first_tref_field_values = implode(", ", lcl_tname_array);
+                            this.first_tref_field_name = lcl_first_tref_field_name;
+                        }
+                    }
+                }
+
+                if(NodeTypeObj.getFieldsList().taxonomies != null && NodeTypeObj.getFieldsList().taxonomies.size() > 1) {
+                    String lcl_second_tref_field_name = NodeTypeObj.getFieldsList().taxonomies.get(1).mFieldName;
+                    if (jo.has(lcl_second_tref_field_name) && !jo.isNull(lcl_second_tref_field_name) && (jo.getJSONArray(lcl_second_tref_field_name).length() > 0)) {
+                        JSONArray lcl_tref_array = jo.getJSONArray(lcl_second_tref_field_name);
+                        List<String> lcl_tname_array = new ArrayList<String>();
+                        for (int j = 0; j < lcl_tref_array.length(); j++) {
+                            if (lcl_tref_array.getJSONObject(j).has("name") && !lcl_tref_array.getJSONObject(j).isNull("name") && !lcl_tref_array.getJSONObject(j).getString("name").isEmpty()) {
+                                lcl_tname_array.add(lcl_tref_array.getJSONObject(j).getString("name"));
+                            }
+                        }
+                        if (lcl_tname_array.size() > 0) {
+                            this.second_tref_field_values = implode(", ", lcl_tname_array);
+                            this.second_tref_field_name = lcl_second_tref_field_name;
+                        }
+                    }
+                    Log.d(TAG, "ModelFanPosts: second_tref_field_values" + second_tref_field_values);
+                    Log.d(TAG, "ModelFanPosts: second_tref_field_name" + second_tref_field_name);
+                }
+
                 String remotePageField = NodeTypeObj.getFieldsList().remote_page;
                 if (jo.has(remotePageField) && !jo.isNull(remotePageField) && (jo.getJSONArray(remotePageField).length() > 0)) {
                     this.field_remote_page = jo.getJSONArray(remotePageField).getJSONObject(0).getString("uri");
@@ -126,6 +167,22 @@ public class ModelFanPosts implements Parcelable {
 
     public String getField_image() {
         return field_image;
+    }
+
+    public String get_first_tref_field_name() {
+       return first_tref_field_name;
+    }
+
+    public String get_first_tref_field_values() {
+        return first_tref_field_values;
+    }
+
+    public String get_second_tref_field_name() {
+        return second_tref_field_name;
+    }
+
+    public String get_second_tref_field_values() {
+        return second_tref_field_values;
     }
 
     public boolean isValidNodeType() {

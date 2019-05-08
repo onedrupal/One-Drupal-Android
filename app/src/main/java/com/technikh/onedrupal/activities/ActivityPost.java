@@ -279,6 +279,9 @@ public class ActivityPost extends ActivityBase implements View.OnClickListener {
             et_f_post.setText(b.getString("nTitle"));
             knife.fromHtml(b.getString("nBody"));
             if(!b.getString("nImage").isEmpty()){
+                if(remoteImageField != null && !remoteImageField.isEmpty()){
+                    et_remote_image_url.setText(b.getString("nImage"));
+                }
                 iv_f_post_preview.setVisibility(View.VISIBLE);
                 iv_f_post_image.setVisibility(View.VISIBLE);
                 //Log.d(TAG, "onCreate: "+b.getString("nImage"));
@@ -286,8 +289,27 @@ public class ActivityPost extends ActivityBase implements View.OnClickListener {
                         .load(b.getString("nImage"))
                         .into(iv_f_post_preview);
             }
+            if(!b.getString("nRemote_page_url").isEmpty()){
+                et_remote_page_url.setText(b.getString("nRemote_page_url"));
+            }
+            if(!b.getString("nRemoteVideo").isEmpty()){
+                et_remote_video_url.setText(b.getString("nRemoteVideo"));
+            }
             toolbar.setTitle("Edit "+nodeType);
-            et_taxonomy_category_auto.setText(b.getString("nTagsMulti"));
+            if(b.getString("nTagsMulti") != null && !b.getString("nTagsMulti").isEmpty()) {
+                if (taxonomyField.equals(b.getString("nTagsMultiFieldName"))) {
+                    et_taxonomy_category_auto.setText(b.getString("nTagsMulti"));
+                } else if (taxonomyFieldSingleCategory.equals(b.getString("nTagsMultiFieldName"))) {
+                    et_taxonomy_category_auto_sngle_categ.setText(b.getString("nTagsMulti"));
+                }
+            }
+            if(b.getString("nTagsMultiSecond") != null && !b.getString("nTagsMultiSecond").isEmpty()) {
+                if (taxonomyField.equals(b.getString("nTagsMultiSecondFieldName"))) {
+                    et_taxonomy_category_auto.setText(b.getString("nTagsMultiSecond"));
+                } else if (taxonomyFieldSingleCategory.equals(b.getString("nTagsMultiSecondFieldName"))) {
+                    et_taxonomy_category_auto_sngle_categ.setText(b.getString("nTagsMultiSecond"));
+                }
+            }
         }else{
             //knife.fromHtml(EXAMPLE);
             toolbar.setTitle("POST "+nodeType);
@@ -350,6 +372,7 @@ public class ActivityPost extends ActivityBase implements View.OnClickListener {
                             .into(new CustomTarget<Bitmap>() {
                                 @Override
                                 public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                                    iv_f_post_preview.setVisibility(View.VISIBLE);
                                     iv_f_post_preview.setImageBitmap(resource);
                                     glideBitmap = resource;
                                     postImageTextBodyAppend();
@@ -985,21 +1008,23 @@ options: [ ]
 }
 ],
              */
-            if(remotePageField != null && !remotePageField.isEmpty() && !et_remote_page_url.getText().toString().isEmpty()) {
+            Log.d(TAG, "makeBlogPost: empty123 remotePageField"+remotePageField);
+            if(remotePageField != null && !remotePageField.isEmpty()) {
+                Log.d(TAG, "makeBlogPost: empty123 et_remote_page_url.getText()"+et_remote_page_url.getText());
                 JSONObject remotePageObject = new JSONObject();
                 remotePageObject.put("uri", et_remote_page_url.getText());
                 JSONArray remotePageArray = new JSONArray();
                 remotePageArray.put(remotePageObject);
                 jsonParams.put(remotePageField, remotePageArray);
             }
-            if(remoteImageField != null && !remoteImageField.isEmpty() && !et_remote_image_url.getText().toString().isEmpty()) {
+            if(remoteImageField != null && !remoteImageField.isEmpty()) {
                 JSONObject remotePageObject = new JSONObject();
                 remotePageObject.put("uri", et_remote_image_url.getText());
                 JSONArray remotePageArray = new JSONArray();
                 remotePageArray.put(remotePageObject);
                 jsonParams.put(remoteImageField, remotePageArray);
             }
-            if(remoteVideoField != null && !remoteVideoField.isEmpty() && !et_remote_video_url.getText().toString().isEmpty()) {
+            if(remoteVideoField != null && !remoteVideoField.isEmpty()) {
                 JSONObject remotePageObject = new JSONObject();
                 remotePageObject.put("value", et_remote_video_url.getText());
                 JSONArray remotePageArray = new JSONArray();

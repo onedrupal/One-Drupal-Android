@@ -54,7 +54,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1">
 
-                        <EditText
+                        <com.technikh.onedrupal.widgets.ClearableEditText
                             android:id="@+id/et_f_post"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -229,7 +229,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1">
 
-                <EditText
+                <com.technikh.onedrupal.widgets.ClearableEditText
                     android:id="@+id/et_remote_image_url"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -248,7 +248,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1">
 
-                <EditText
+                <com.technikh.onedrupal.widgets.ClearableEditText
                     android:id="@+id/et_remote_page_url"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -267,7 +267,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1">
 
-                <EditText
+                <com.technikh.onedrupal.widgets.ClearableEditText
                     android:id="@+id/et_remote_video_url"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

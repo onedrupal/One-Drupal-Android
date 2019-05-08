@@ -14,10 +14,10 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.technikh.onedrupal"
-        minSdkVersion 19
+        minSdkVersion 16
         targetSdkVersion 28
-        versionCode 3
-        versionName "1.3"
+        versionCode 4
+        versionName "1.4"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         buildConfigField("String", "google_auth_client_id", apikeyProperties['google_auth_client_id'])
