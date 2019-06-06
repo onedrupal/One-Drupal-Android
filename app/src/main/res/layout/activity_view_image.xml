@@ -30,6 +30,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"></com.bogdwellers.pinchtozoom.view.ImageViewPager>
 
+            <com.technikh.onedrupal.widgets.TextCursorOnImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/dragRect" />
+
             <ImageView
                 android:id="@+id/ivLeft"
                 android:layout_width="wrap_content"
@@ -40,7 +45,6 @@
                 android:padding="@dimen/dimen_5dp"
                 app:srcCompat="@drawable/ic_left"
                 android:visibility="gone"
-
                 />
 
             <ImageView
@@ -73,15 +77,29 @@
         android:focusable="false"
         android:orientation="vertical">
 
-        <EditText
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/et_image_text"
-            android:gravity="top|left"
-            android:inputType="textMultiLine"
-            android:lines="8"
-            android:maxLines="10"
-            android:minLines="6"
-            android:scrollbars="vertical" />
+            android:layout_weight="1">
+
+            <com.technikh.onedrupal.widgets.ClearableEditText
+                android:id="@+id/et_image_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="top|left"
+                android:hint="Selected text from Image"
+                android:inputType="textMultiLine"
+                android:selectAllOnFocus="true"
+                android:lines="8"
+                android:maxLines="10"
+                android:minLines="6"
+                android:scrollbars="vertical"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/color_secondary_text_dark"
+                android:textColorHint="@color/color_secondary_text"
+                app:fontFamily="@font/sf_regular"
+                tools:text="Selected text from Image" />
+        </com.google.android.material.textfield.TextInputLayout>
+
     </LinearLayout>
 </com.sothree.slidinguppanel.SlidingUpPanelLayout>

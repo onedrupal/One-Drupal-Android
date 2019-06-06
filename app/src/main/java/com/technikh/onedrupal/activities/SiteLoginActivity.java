@@ -204,7 +204,7 @@ public class SiteLoginActivity extends AccountAuthenticatorActivity {
             cancel = true;
         }
         // site textbox no slash / atleast one period
-        if (TextUtils.isEmpty(primarySiteURL) || primarySiteURL.contains("/") || primarySiteURL.contains("@") || !primarySiteURL.contains(".")) {
+        if (TextUtils.isEmpty(primarySiteURL) || primarySiteURL.endsWith("/") || primarySiteURL.contains("@") || !primarySiteURL.contains(".")) {
             mSiteUrl.setError(getString(R.string.error_invalid_site_domain));
             focusView = mSiteUrl;
             cancel = true;

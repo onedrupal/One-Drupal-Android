@@ -105,5 +105,11 @@
     <string name="ic_keyboard_arrow_right">&#xe0c7;</string>
     <string name="ic_keyboard_arrow_down">&#xe0c5;</string>
     <string name="title_activity_taxonomy_browser">Browser</string>
+    <string name="appwidget_text">ChangeMe</string>
+    <string name="configure">Configure</string>
+    <string name="add_widget">Save widget</string>
+
+    <string name="channel_name">API Notifications</string>
+    <string name="channel_description">Notifications after an API call</string>
 
 </resources>

@@ -30,6 +30,7 @@ public class ModelFanPosts implements Parcelable {
     private String title;
     private String body="";
     private String node_type="";
+    public String node_changed_date_str;
     private String field_image="";
     public String field_video="", field_remote_page="", first_tref_field_name = "", first_tref_field_values = "", second_tref_field_name = "", second_tref_field_values = "";
     private String field_video_thumbnail="";
@@ -55,6 +56,8 @@ public class ModelFanPosts implements Parcelable {
 
             this.nid = jo.getJSONArray("nid").getJSONObject(0).getString("value");
             this.title = jo.getJSONArray("title").getJSONObject(0).getString("value");
+            // created can be altered in drupal node edit form UI
+            this.node_changed_date_str = jo.getJSONArray("created").getJSONObject(0).getString("value");
 
             this.isValidNodeType = MyApplication.gblIsValidNodeType(node_type);
             if(this.isValidNodeType) {

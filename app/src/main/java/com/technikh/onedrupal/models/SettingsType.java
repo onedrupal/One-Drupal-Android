@@ -17,6 +17,8 @@ public class SettingsType {
 
     @SerializedName("node_type")
     private String node_type="";
+    @SerializedName("preferred_view_mode")
+    public String preferred_view_mode="";
   /*  private String body="";
     private String field_image="";*/
     private String TAG = "ModelNodeType";

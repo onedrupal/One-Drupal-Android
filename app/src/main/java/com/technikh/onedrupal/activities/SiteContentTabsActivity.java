@@ -46,6 +46,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import com.technikh.onedrupal.R;
 import com.technikh.onedrupal.app.MyApplication;
 import com.technikh.onedrupal.authenticator.AuthPreferences;
+import com.technikh.onedrupal.fragments.BarChartFrag;
 import com.technikh.onedrupal.fragments.FragmentADRedsox;
 import com.technikh.onedrupal.models.SettingsType;
 import com.technikh.onedrupal.util.AccountUtils;
@@ -350,6 +351,7 @@ public class SiteContentTabsActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });*/
+        tabLayout.getTabAt(2).select();
     }
 
 /*
@@ -426,13 +428,19 @@ public class SiteContentTabsActivity extends AppCompatActivity {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
             //return PlaceholderFragment.newInstance(position + 1);
-            Log.d(TAG, "SectionsPagerAdapter getItem: "+mSiteDomain);
-            //SettingsType nTypeObj = MyApplication.gblGetNodeTypeFromPosition(position);
-            //if(nTypeObj.getNodeType().equals("movies") || nTypeObj.getNodeType().equals("tb_page")){
-                return FragmentADRedsox.newInstance(position, mSiteProtocol, mSiteDomain);
-            //}else {
-              //  return FragmentADRedsox.newInstance(position, mSiteProtocol, mSiteDomain);
-            //}
+            Log.d(TAG, "SectionsPagerAdapter getItem: "+mSiteDomain+" position "+position);
+            try {
+                if(position >= 2) {
+                    SettingsType nTypeObj = MyApplication.gblGetNodeTypeFromPosition(position - 2);
+                    if (nTypeObj.preferred_view_mode.equals("chart_bar_simple")) {
+                        return BarChartFrag.newInstance(position, mSiteProtocol, mSiteDomain);
+                    }
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            return FragmentADRedsox.newInstance(position, mSiteProtocol, mSiteDomain);
+
         }
 
         @Override

@@ -10,12 +10,14 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
@@ -27,13 +29,18 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import androidx.appcompat.widget.AppCompatImageView;
+
 import android.widget.ImageView;
 import android.widget.OverScroller;
 import android.widget.Scroller;
 
-public class TouchImageView extends ImageView {
+import java.io.InputStream;
+import java.net.URL;
 
-	private static final String DEBUG = "DEBUG";
+public class TouchImageView extends AppCompatImageView {
+
+	private static final String TAG = "DEBUG";
 
 	//
 	// SuperMin and SuperMax multipliers. Determine how much the image can be
@@ -168,6 +175,48 @@ public class TouchImageView extends ImageView {
 		super.setImageURI(uri);
 		savePreviousImageValues();
 		fitImageToView();
+	}
+
+	public void setImageURL(String url) {
+		new DownLoadImageTask().execute(url);
+	}
+
+	private class DownLoadImageTask extends AsyncTask<String,Void,Bitmap> {
+		//ImageView imageView;
+
+		public DownLoadImageTask(){
+			//this.imageView = imageView;
+		}
+
+		/*
+            doInBackground(Params... params)
+                Override this method to perform a computation on a background thread.
+         */
+		protected Bitmap doInBackground(String...urls){
+			String urlOfImage = urls[0];
+			Bitmap logo = null;
+			try{
+				InputStream is = new URL(urlOfImage).openStream();
+                /*
+                    decodeStream(InputStream is)
+                        Decode an input stream into a bitmap.
+                 */
+				logo = BitmapFactory.decodeStream(is);
+			}catch(Exception e){ // Catch the download exception
+				e.printStackTrace();
+			}
+			return logo;
+		}
+
+		/*
+            onPostExecute(Result result)
+                Runs on the UI thread after doInBackground(Params...).
+         */
+		protected void onPostExecute(Bitmap result){
+			Log.d(TAG, "onPostExecute: setImageBitmap");
+			setImageBitmap(result);
+			//imageView.setImageBitmap(result);
+		}
 	}
 
 	@Override
@@ -1265,6 +1314,6 @@ public class TouchImageView extends ImageView {
 	private void printMatrixInfo() {
 		float[] n = new float[9];
 		matrix.getValues(n);
-		Log.d(DEBUG, "Scale: " + n[Matrix.MSCALE_X] + " TransX: " + n[Matrix.MTRANS_X] + " TransY: " + n[Matrix.MTRANS_Y]);
+		Log.d(TAG, "Scale: " + n[Matrix.MSCALE_X] + " TransX: " + n[Matrix.MTRANS_X] + " TransY: " + n[Matrix.MTRANS_Y]);
 	}
 }

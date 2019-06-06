@@ -16,8 +16,8 @@ android {
         applicationId "com.technikh.onedrupal"
         minSdkVersion 16
         targetSdkVersion 28
-        versionCode 4
-        versionName "1.4"
+        versionCode 5
+        versionName "1.5"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         buildConfigField("String", "google_auth_client_id", apikeyProperties['google_auth_client_id'])
@@ -80,6 +80,7 @@ dependencies {
 
     //implementation 'com.github.stfalcon:stfalcon-imageviewer:0.1.0'
     implementation 'com.sothree.slidinguppanel:library:3.4.0'
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 }
 
 apply plugin: 'com.google.gms.google-services'
